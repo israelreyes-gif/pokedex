@@ -32,7 +32,8 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="pokeSearchInput" placeholder="Busca un Pokémon (nombre o número)…" autocomplete="off">
       </div>
-      <div class="search-hint">Datos en vivo desde PokeAPI · se guardan en tu dispositivo para consultarlos sin conexión</div>
+      <div class="suggestions" id="pokeSuggestions" style="display:none;"></div>
+      <div class="search-hint">Nombre, #número (ej. #25) · datos en vivo desde PokeAPI, guardados en tu dispositivo</div>
     </div>
 
     <div id="favRow" class="fav-row" style="display:none;">
@@ -100,5 +101,6 @@
 <script src="matchup-engine.js"></script>
 <script src="pokemon-view.js"></script>
 <script src="types-view.js"></script>
+
 </body>
 </html>
