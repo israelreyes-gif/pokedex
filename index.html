@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeDex — Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="brand"><span class="mark"></span><h1>TypeDex</h1></div>
+    <p class="subtitle">Consulta quién le gana a quién</p>
+  </header>
+
+  <div class="mode-switch">
+    <div class="toggle" id="modeToggle">
+      <div class="slider"></div>
+      <button class="active" data-mode="pokemon">Por Pokémon</button>
+      <button data-mode="tipo">Por Tipo</button>
+    </div>
+  </div>
+
+  <!-- ======================= MODO: POR POKEMON ======================= -->
+  <div id="view-pokemon">
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="pokeSearchInput" placeholder="Busca un Pokémon (nombre o número)…" autocomplete="off">
+      </div>
+      <div class="search-hint">Datos en vivo desde PokeAPI · se guardan en tu dispositivo para consultarlos sin conexión</div>
+    </div>
+
+    <div id="favRow" class="fav-row" style="display:none;">
+      <div class="fav-row-label">★ Favoritos</div>
+      <div class="fav-chips" id="favChips"></div>
+    </div>
+
+    <div id="pokeResultZone"></div>
+
+  </div>
+
+  <!-- ======================= MODO: POR TIPO ======================= -->
+  <div id="view-tipo" style="display:none;">
+
+    <div class="toggle-wrap">
+      <div class="toggle" id="toggle">
+        <div class="slider"></div>
+        <button class="active" data-mode="simple">Simple <span class="pill-count">1 tipo</span></button>
+        <button data-mode="complex">Complejo <span class="pill-count">2 tipos</span></button>
+      </div>
+    </div>
+
+    <div class="section-label" id="hexLabel">Elige un tipo</div>
+    <div class="hexgrid" id="hexgrid">
+      <div class="hex t-fuego" data-type="fuego">Fuego</div>
+      <div class="hex t-agua" data-type="agua">Agua</div>
+      <div class="hex t-planta" data-type="planta">Planta</div>
+      <div class="hex t-electrico selected" data-type="electrico">Eléctrico</div>
+      <div class="hex t-hielo" data-type="hielo">Hielo</div>
+      <div class="hex t-lucha" data-type="lucha">Lucha</div>
+      <div class="hex t-veneno" data-type="veneno">Veneno</div>
+      <div class="hex t-tierra" data-type="tierra">Tierra</div>
+      <div class="hex t-volador" data-type="volador">Volador</div>
+      <div class="hex t-psiquico" data-type="psiquico">Psíquico</div>
+      <div class="hex t-bicho" data-type="bicho">Bicho</div>
+      <div class="hex t-roca" data-type="roca">Roca</div>
+      <div class="hex t-fantasma" data-type="fantasma">Fantasma</div>
+      <div class="hex t-dragon" data-type="dragon">Dragón</div>
+      <div class="hex t-siniestro" data-type="siniestro">Siniestro</div>
+      <div class="hex t-acero" data-type="acero">Acero</div>
+      <div class="hex t-hada" data-type="hada">Hada</div>
+      <div class="hex t-normal" data-type="normal">Normal</div>
+    </div>
+
+    <div id="complex-view" style="display:none;">
+      <div class="combo-row">
+        <div class="combo-slot" id="comboSlot1">Tipo 1</div>
+        <div class="combo-plus">+</div>
+        <div class="combo-slot" id="comboSlot2">Tipo 2</div>
+      </div>
+    </div>
+
+    <div id="typeResultZone"></div>
+
+  </div>
+
+  <footer>
+    Datos: PokeAPI (en vivo + caché local) <span class="badge-mock">v0.3</span>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
