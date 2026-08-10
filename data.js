@@ -42,6 +42,8 @@
   };
   Object.keys(SEED_POKEMON).forEach(function(name){
     if(!lsGet('td_pokemon_' + name)) lsSet('td_pokemon_' + name, SEED_POKEMON[name]);
+    const idKey = String(SEED_POKEMON[name].id);
+    if(!lsGet('td_pokemon_' + idKey)) lsSet('td_pokemon_' + idKey, SEED_POKEMON[name]);
   });
 
   // Semilla de cadenas evolutivas (para que funcionen sin conexión la primera vez)
