@@ -358,6 +358,4 @@
 
   ensurePokemonIndex(); // precarga en segundo plano para que el primer tecleo ya tenga sugerencias
 
-  document.getElementById('pokeSearchInput').value = 'pikachu';
-  doPokemonSearch();
-  renderFavRow();
+  renderFavRow(); // por si ya hay favoritos guardados de una visita anterior
