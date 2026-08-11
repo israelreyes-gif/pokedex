@@ -52,13 +52,13 @@
       let best = 0;
       ownRelsArray.forEach(function(rel){ best = Math.max(best, multTo(rel, en)); });
       if(best >= 2) fuerte.push({ t: EN_TO_ES[en], m: 'x2' });
-      else if(best === 0) sinEfectoAtaque.push({ t: EN_TO_ES[en] });
+      else if(best === 0) sinEfectoAtaque.push({ t: EN_TO_ES[en], m: 'x0' });
       else if(best < 1) flojo.push({ t: EN_TO_ES[en], m: 'x½' });
 
       // defensivo: producto de multiplicadores al recibir ataques de "en"
       let combo = 1;
       ownRelsArray.forEach(function(rel){ combo *= multFrom(rel, en); });
-      if(combo === 0) inmune.push({ t: EN_TO_ES[en] });
+      if(combo === 0) inmune.push({ t: EN_TO_ES[en], m: 'x0' });
       else if(combo >= 2) debil.push({ t: EN_TO_ES[en], m: (combo === 4 ? 'x4' : 'x2') });
       else if(combo < 1) resiste.push({ t: EN_TO_ES[en], m: (combo === 0.25 ? 'x¼' : 'x½') });
     });
