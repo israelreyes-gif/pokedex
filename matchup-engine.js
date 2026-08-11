@@ -46,7 +46,7 @@
   }
 
   function computeMatchup(ownRelsArray){
-    const fuerte = [], debil = [], inmune = [];
+    const fuerte = [], debil = [], resiste = [], inmune = [];
     ALL_EN_TYPES.forEach(function(en){
       // ofensivo: mejor multiplicador entre los tipos propios atacando "en"
       let best = 0;
@@ -58,8 +58,9 @@
       ownRelsArray.forEach(function(rel){ combo *= multFrom(rel, en); });
       if(combo === 0) inmune.push({ t: EN_TO_ES[en] });
       else if(combo >= 2) debil.push({ t: EN_TO_ES[en], m: (combo === 4 ? 'x4' : 'x2') });
+      else if(combo < 1) resiste.push({ t: EN_TO_ES[en], m: (combo === 0.25 ? 'x¼' : 'x½') });
     });
-    return { fuerte: fuerte, debil: debil, inmune: inmune };
+    return { fuerte: fuerte, debil: debil, resiste: resiste, inmune: inmune };
   }
 
 
@@ -88,6 +89,9 @@
     html += '<div class="matchup-section-title">Defensa</div>';
     html += '<div class="row-group"><div class="row-title debil">▼ Débil contra</div><div class="tag-list">';
     html += matchup.debil.length ? matchup.debil.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
+    html += '</div></div>';
+    html += '<div class="row-group"><div class="row-title resiste">▲ Resiste</div><div class="tag-list">';
+    html += matchup.resiste.length ? matchup.resiste.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
     html += '</div></div>';
     html += '<div class="row-group"><div class="row-title inmune">● Sin efecto</div><div class="tag-list">';
     html += matchup.inmune.length ? matchup.inmune.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
