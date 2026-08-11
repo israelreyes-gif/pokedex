@@ -124,11 +124,19 @@
 
   .fav-row{ padding:0 20px 16px; }
   .fav-row-label{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; margin-bottom:8px; }
-  .fav-chips{ display:flex; gap:8px; flex-wrap:wrap; }
-  .fav-chip{ display:flex; align-items:center; gap:6px; background:var(--panel-2); border:1px solid var(--line);
-    border-radius:20px; padding:6px 12px; font-size:12.5px; font-weight:600; cursor:pointer; transition:border-color .15s; }
-  .fav-chip:hover{ border-color: rgba(255,255,255,0.3); }
-  .fav-chip .fdot{ width:8px;height:8px;border-radius:50%; }
+  .fav-chips{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .fav-card{ position:relative; display:flex; flex-direction:column; align-items:center; gap:4px;
+    background:var(--panel-2); border:1px solid var(--line); border-radius:12px;
+    padding:12px 8px 10px; cursor:pointer; transition:border-color .15s; }
+  .fav-card:hover{ border-color: rgba(255,255,255,0.3); }
+  .fav-card-img{ width:48px; height:48px; object-fit:contain; }
+  .fav-card-name{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; text-transform:capitalize; }
+  .fav-card-types{ display:flex; gap:4px; flex-wrap:wrap; justify-content:center; }
+  .fav-card-types .chip{ font-size:9px; padding:3px 8px; }
+  .fav-remove-btn{ position:absolute; top:6px; right:6px; background:none; border:none; color:var(--muted);
+    cursor:pointer; font-size:11px; padding:5px; line-height:1; transition:color .15s; }
+  .fav-remove-btn:hover{ color:var(--fuego); }
+  .fav-empty{ font-size:12.5px; color:var(--muted); line-height:1.5; padding:2px; }
 
   .poke-card{ margin:0 20px 28px; background:var(--panel); border-radius:16px; border:1px solid var(--line); overflow:hidden; }
   .poke-hero{ background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.10), transparent 60%),
