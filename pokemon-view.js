@@ -311,7 +311,7 @@
       let evoChainUrl;
       try{
         const res = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + p.name);
-        if(!res.ok) throw new Error('HTTP ' + res.status);
+        if(!res.ok) throw { kind: 'server', status: res.status };
         const json = await res.json();
         evoChainUrl = json.evolution_chain.url;
         lsSet(speciesCacheKey, { evolutionChainUrl: evoChainUrl });
@@ -326,7 +326,7 @@
       let chainRoot;
       try{
         const res2 = await fetch(evoChainUrl);
-        if(!res2.ok) throw new Error('HTTP ' + res2.status);
+        if(!res2.ok) throw { kind: 'server', status: res2.status };
         const json2 = await res2.json();
         chainRoot = json2.chain;
         lsSet(chainCacheKey, chainRoot);
@@ -354,7 +354,7 @@
     pokemonIndexPromise = (async function(){
       try{
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000');
-        if(!res.ok) throw new Error('HTTP ' + res.status);
+        if(!res.ok) throw { kind: 'server', status: res.status };
         const json = await res.json();
         const list = json.results.map(function(r){ return { name: r.name, id: extractIdFromUrl(r.url) }; });
         lsSet('td_pokemon_index', list);
