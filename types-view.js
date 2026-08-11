@@ -93,7 +93,12 @@
         if(comboSelection.length >= 2) comboSelection = [];
         comboSelection.push(esType);
         updateComboSlots();
-        if(comboSelection.length === 2) runTypeQuery(comboSelection);
+        if(comboSelection.length === 2){
+          runTypeQuery(comboSelection);
+        } else {
+          // solo hay 1 tipo elegido: el resultado anterior ya no es válido
+          document.getElementById('typeResultZone').innerHTML = '';
+        }
       } else {
         document.querySelectorAll('.hex').forEach(function(h){ h.classList.remove('selected'); });
         hex.classList.add('selected');
