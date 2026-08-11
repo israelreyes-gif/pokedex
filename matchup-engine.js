@@ -46,13 +46,14 @@
   }
 
   function computeMatchup(ownRelsArray){
-    const fuerte = [], flojo = [], debil = [], resiste = [], inmune = [];
+    const fuerte = [], flojo = [], sinEfectoAtaque = [], debil = [], resiste = [], inmune = [];
     ALL_EN_TYPES.forEach(function(en){
       // ofensivo: mejor multiplicador entre los tipos propios atacando "en"
       let best = 0;
       ownRelsArray.forEach(function(rel){ best = Math.max(best, multTo(rel, en)); });
       if(best >= 2) fuerte.push({ t: EN_TO_ES[en], m: 'x2' });
-      else if(best < 1) flojo.push({ t: EN_TO_ES[en], m: (best === 0 ? 'x0' : 'x½') });
+      else if(best === 0) sinEfectoAtaque.push({ t: EN_TO_ES[en] });
+      else if(best < 1) flojo.push({ t: EN_TO_ES[en], m: 'x½' });
 
       // defensivo: producto de multiplicadores al recibir ataques de "en"
       let combo = 1;
@@ -61,7 +62,7 @@
       else if(combo >= 2) debil.push({ t: EN_TO_ES[en], m: (combo === 4 ? 'x4' : 'x2') });
       else if(combo < 1) resiste.push({ t: EN_TO_ES[en], m: (combo === 0.25 ? 'x¼' : 'x½') });
     });
-    return { fuerte: fuerte, flojo: flojo, debil: debil, resiste: resiste, inmune: inmune };
+    return { fuerte: fuerte, flojo: flojo, sinEfectoAtaque: sinEfectoAtaque, debil: debil, resiste: resiste, inmune: inmune };
   }
 
 
@@ -85,6 +86,9 @@
     html += '</div></div>';
     html += '<div class="row-group"><div class="row-title flojo">▼ Poco eficaz contra</div><div class="tag-list">';
     html += matchup.flojo.length ? matchup.flojo.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
+    html += '</div></div>';
+    html += '<div class="row-group"><div class="row-title inmune">● Sin efecto</div><div class="tag-list">';
+    html += matchup.sinEfectoAtaque.length ? matchup.sinEfectoAtaque.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
     html += '</div></div>';
     html += '</div>';
 
