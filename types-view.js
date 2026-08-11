@@ -68,7 +68,7 @@
     zone.innerHTML = loadingHTML();
     try{
       const rels = [];
-      for(const es of esTypes){ const r = await getTypeRelations(ES_TO_EN[es]); rels.push(r.rel); }
+      esTypes.forEach(function(es){ rels.push(getTypeRelations(ES_TO_EN[es])); });
       const matchup = computeMatchup(rels);
       const chipsHTML = esTypes.map(function(es, i){
         return (i > 0 ? '<span class="vs">+</span>' : '') + '<span class="chip t-' + es + '">' + TYPE_LABELS[es] + '</span>';
