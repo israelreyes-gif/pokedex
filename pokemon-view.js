@@ -24,7 +24,7 @@
   }
 
   /* ---------- ficha de Pokémon ---------- */
-  function renderPokemonCard(p, offlineNotice){
+  function renderPokemonCard(p){
     const typeChips = p.types.map(function(en){ return typeChip(EN_TO_ES[en]); }).join('');
     const category = p.types.length > 1 ? 'Pokémon complejo' : 'Pokémon simple';
     const heightM = (p.height / 10).toFixed(1) + ' m';
@@ -56,8 +56,7 @@
           '<div id="pokeMatchupSlot"><div class="matchup-block"><div class="matchup-title">Calculando ventajas y debilidades…</div></div></div>' +
           '<div id="pokeEvoSlot"><div class="matchup-block"><div class="matchup-title">Cargando cadena evolutiva…</div></div></div>' +
         '</div>' +
-      '</div>' +
-      (offlineNotice ? '<div class="source-tag"><span class="pulse" style="background:#8A8FA3"></span>datos de caché local (sin conexión)</div>' : '<div class="source-tag"><span class="pulse"></span>en vivo desde PokeAPI</div>')
+      '</div>'
     );
   }
 
@@ -94,7 +93,7 @@
       // sin red y sin caché: probamos la caché "simplificada" de semillas
       const seeded = lsGet('td_pokemon_' + query);
       if(seeded){
-        zone.innerHTML = renderPokemonCard(seeded, true);
+        zone.innerHTML = renderPokemonCard(seeded);
         wireCard(seeded);
       } else if(query){
         zone.innerHTML = errorHTML(raw.trim());
@@ -130,7 +129,7 @@
     lsSet('td_pokemon_' + p.name, p);
     lsSet('td_pokemon_' + String(p.id), p);
 
-    zone.innerHTML = renderPokemonCard(p, result.fromCache);
+    zone.innerHTML = renderPokemonCard(p);
     wireCard(p);
   }
 
@@ -280,7 +279,7 @@
       wireEvoNodes(slot, p.name);
     }catch(e){
       slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">Cadena evolutiva</div>' +
-        '<div class="evo-unavailable">No disponible sin conexión ni caché para este Pokémon.</div></div>';
+        '<div class="evo-unavailable">No hay datos de evolución disponibles para este Pokémon.</div></div>';
     }
   }
 
