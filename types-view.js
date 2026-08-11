@@ -45,8 +45,6 @@
         toggle.classList.remove('state-2');
         complexView.style.display = 'none';
         hexLabel.textContent = 'Elige un tipo';
-        document.querySelector('.hex[data-type="electrico"]').classList.add('selected');
-        runTypeQuery(['electrico']);
       }
     });
   });
@@ -106,6 +104,3 @@
       }
     });
   });
-
-  // Carga inicial del panel "Por Tipo" con Eléctrico ya seleccionado
-  runTypeQuery(['electrico']);
