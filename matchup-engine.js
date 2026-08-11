@@ -1,7 +1,7 @@
 /* ============================================================
-   matchup-engine.js — Motor de tipos: llamadas a PokeAPI para
-   relaciones de daño, cálculo de multiplicadores, y componentes
-   visuales reutilizables (chips, etiquetas, estados de carga/error)
+   matchup-engine.js — Motor de tipos: relaciones de daño (tabla
+   local), cálculo de multiplicadores, y componentes visuales
+   reutilizables (chips, etiquetas, estados de carga/error)
    ============================================================ */
 
   async function cachedFetchJSON(url, cacheKey){
@@ -26,27 +26,10 @@
     return { data: data, fromCache: false };
   }
 
+  // Las relaciones de tipo son datos fijos (nunca cambian), así que
+  // se leen directamente de TYPE_CHART en vez de pedirlas a PokeAPI.
   async function getTypeRelations(enSlug){
-    const cacheKey = 'td_type_' + enSlug;
-    const cached = lsGet(cacheKey);
-    try{
-      const res = await fetch('https://pokeapi.co/api/v2/type/' + enSlug);
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      const json = await res.json();
-      const rel = {
-        double_from: json.damage_relations.double_damage_from.map(function(t){return t.name;}),
-        double_to:   json.damage_relations.double_damage_to.map(function(t){return t.name;}),
-        half_from:   json.damage_relations.half_damage_from.map(function(t){return t.name;}),
-        half_to:     json.damage_relations.half_damage_to.map(function(t){return t.name;}),
-        no_from:     json.damage_relations.no_damage_from.map(function(t){return t.name;}),
-        no_to:       json.damage_relations.no_damage_to.map(function(t){return t.name;})
-      };
-      lsSet(cacheKey, rel);
-      return { rel: rel, fromCache: false };
-    }catch(err){
-      if(cached) return { rel: cached, fromCache: true };
-      throw err;
-    }
+    return { rel: TYPE_CHART[enSlug], fromCache: false };
   }
 
   function multFrom(rel, attackerEn){
