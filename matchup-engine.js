@@ -95,7 +95,7 @@
   }
 
   function loadingHTML(msg){
-    return '<div class="loading-state"><div class="big">Buscando…</div>' + (msg || 'Consultando PokeAPI') + '</div>';
+    return '<div class="loading-state"><div class="big">Buscando…</div>' + (msg || 'Un momento') + '</div>';
   }
   function errorHTML(query){
     return '<div class="error-state"><div class="big">No se pudo cargar</div>' +
