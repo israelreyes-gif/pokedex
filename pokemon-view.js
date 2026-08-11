@@ -54,7 +54,7 @@
       '<div class="poke-card">' +
         '<div class="poke-hero">' +
           '<span class="poke-id">' + idStr + '</span>' +
-          '<button class="poke-fav-btn' + (fav ? ' active' : '') + '" id="favBtn" title="Marcar como favorito">' + (fav ? '★' : '☆') + '</button>' +
+          '<button class="poke-fav-btn' + (fav ? ' active' : '') + '" id="favBtn" title="' + (fav ? 'Quitar de favoritos' : 'Marcar como favorito') + '" aria-label="' + (fav ? 'Quitar de favoritos' : 'Marcar como favorito') + '" aria-pressed="' + fav + '">' + (fav ? '★' : '☆') + '</button>' +
           '<img class="poke-illustration" src="' + p.sprite + '" alt="' + p.name + '">' +
           '<div class="poke-name">' + p.name + '</div>' +
           '<div class="poke-types">' + typeChips + '</div>' +
@@ -158,7 +158,12 @@
       favBtn.addEventListener('click', function(){
         toggleFavorite(p.name);
         favBtn.classList.toggle('active');
-        favBtn.textContent = favBtn.classList.contains('active') ? '★' : '☆';
+        const nowFav = favBtn.classList.contains('active');
+        favBtn.textContent = nowFav ? '★' : '☆';
+        const label = nowFav ? 'Quitar de favoritos' : 'Marcar como favorito';
+        favBtn.setAttribute('aria-label', label);
+        favBtn.setAttribute('aria-pressed', nowFav);
+        favBtn.setAttribute('title', label);
       });
     }
     try{
