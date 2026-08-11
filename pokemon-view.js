@@ -49,6 +49,9 @@
           '<div class="stat-grid">' +
             '<div class="stat-box"><div class="val">' + p.stats.hp + '</div><div class="lbl">PS</div></div>' +
             '<div class="stat-box"><div class="val">' + p.stats.attack + '</div><div class="lbl">Ataque</div></div>' +
+            '<div class="stat-box"><div class="val">' + p.stats.defense + '</div><div class="lbl">Defensa</div></div>' +
+            '<div class="stat-box"><div class="val">' + p.stats['special-attack'] + '</div><div class="lbl">At. Esp.</div></div>' +
+            '<div class="stat-box"><div class="val">' + p.stats['special-defense'] + '</div><div class="lbl">Def. Esp.</div></div>' +
             '<div class="stat-box"><div class="val">' + p.stats.speed + '</div><div class="lbl">Velocidad</div></div>' +
           '</div>' +
           '<div class="info-line"><span class="k">Categoría</span><span class="v">' + category + '</span></div>' +
