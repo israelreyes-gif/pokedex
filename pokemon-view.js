@@ -16,15 +16,11 @@
 
     chips.innerHTML = favs.map(function(name){
       const cached = lsGet('td_pokemon_' + name);
-      const typesHtml = (cached && cached.types)
-        ? cached.types.map(function(en){ return typeChip(EN_TO_ES[en]); }).join('')
-        : '';
       const sprite = (cached && cached.sprite) ? cached.sprite : '';
       return '<div class="fav-card" data-name="' + name + '">' +
-        '<button class="fav-remove-btn" data-name="' + name + '" aria-label="Quitar de favoritos">✕</button>' +
         (sprite ? '<img class="fav-card-img" src="' + sprite + '" alt="' + name + '">' : '<div class="fav-card-img"></div>') +
         '<div class="fav-card-name">' + name.charAt(0).toUpperCase() + name.slice(1) + '</div>' +
-        '<div class="fav-card-types">' + typesHtml + '</div>' +
+        '<button class="fav-remove-btn" data-name="' + name + '" aria-label="Quitar de favoritos">✕</button>' +
       '</div>';
     }).join('');
 
