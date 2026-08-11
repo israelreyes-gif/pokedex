@@ -323,7 +323,10 @@
     const list = await ensurePokemonIndex();
     if(!list.length){ hideSuggestions(); return; }
 
-    const matches = list.filter(function(p){ return p.name.indexOf(q) === 0; }).slice(0, 6);
+    // primero los que empiezan por lo escrito, luego los que lo contienen en cualquier parte
+    const starts = list.filter(function(p){ return p.name.indexOf(q) === 0; });
+    const contains = list.filter(function(p){ return p.name.indexOf(q) > 0; });
+    const matches = starts.concat(contains).slice(0, 6);
     if(!matches.length){ hideSuggestions(); return; }
 
     box.innerHTML = matches.map(function(p){
