@@ -78,7 +78,7 @@
       zone.innerHTML =
         '<div class="result"><div class="result-head">' + chipsHTML +
         '<span class="vs" style="margin-left:auto;">datos en vivo</span></div>' +
-        '<div class="result-body">' + renderMatchupBlock(matchup, '').replace('<div class="matchup-block">','<div>').replace(/<\/div>$/,'</div>') +
+        '<div class="result-body">' + renderMatchupBlock(matchup, '', { standalone: true }) +
         '</div></div>';
     }catch(e){
       zone.innerHTML = errorHTML(esTypes.map(function(es){return TYPE_LABELS[es];}).join(' / '));
