@@ -77,9 +77,61 @@
         '<div class="result"><div class="result-head">' + chipsHTML +
         '<span class="vs" style="margin-left:auto;">datos en vivo</span></div>' +
         '<div class="result-body">' + renderMatchupBlock(matchup, '', { standalone: true }) +
+        '<div id="typeExamplesSlot" class="examples-section"><div class="examples-title">' +
+          (esTypes.length > 1 ? 'Ejemplos de esta combinación' : 'Ejemplos de este tipo') +
+        '</div><div style="font-size:12px;color:var(--muted);">Cargando…</div></div>' +
         '</div></div>';
+      loadTypeExamples(esTypes);
     }catch(e){
       zone.innerHTML = errorHTML(esTypes.map(function(es){return TYPE_LABELS[es];}).join(' / '));
+    }
+  }
+
+  function exampleCardHTML(p){
+    return '<div class="example-card" data-name="' + p.name + '">' +
+      '<img src="' + spriteUrlForId(p.id) + '" alt="' + p.name + '">' +
+      '<div class="name">' + p.name + '</div></div>';
+  }
+
+  function goToPokemon(name){
+    document.querySelector('#modeToggle button[data-mode="pokemon"]').click();
+    document.getElementById('pokeSearchInput').value = name;
+    doPokemonSearch();
+  }
+
+  async function loadTypeExamples(esTypes){
+    const slot = document.getElementById('typeExamplesSlot');
+    if(!slot) return;
+    const title = esTypes.length > 1 ? 'Ejemplos de esta combinación' : 'Ejemplos de este tipo';
+    try{
+      const enSlugs = esTypes.map(function(es){ return ES_TO_EN[es]; });
+      const lists = await Promise.all(enSlugs.map(function(en){ return getTypePokemonList(en); }));
+
+      let examples = lists[0];
+      if(lists.length > 1){
+        const namesInSecond = {};
+        lists[1].forEach(function(p){ namesInSecond[p.name] = true; });
+        examples = examples.filter(function(p){ return namesInSecond[p.name]; });
+      }
+      examples = examples.slice()
+        .sort(function(a, b){ return parseInt(a.id, 10) - parseInt(b.id, 10); })
+        .slice(0, 8);
+
+      if(!examples.length){
+        slot.innerHTML = '<div class="examples-title">' + title + '</div>' +
+          '<div style="font-size:12px;color:var(--muted);">No hay ningún Pokémon conocido con esta combinación.</div>';
+        return;
+      }
+
+      slot.innerHTML = '<div class="examples-title">' + title + '</div>' +
+        '<div class="examples-row">' + examples.map(exampleCardHTML).join('') + '</div>';
+
+      slot.querySelectorAll('.example-card').forEach(function(card){
+        card.addEventListener('click', function(){ goToPokemon(card.dataset.name); });
+      });
+    }catch(e){
+      slot.innerHTML = '<div class="examples-title">' + title + '</div>' +
+        '<div style="font-size:12px;color:var(--muted);">No disponible sin conexión.</div>';
     }
   }
 
