@@ -61,11 +61,29 @@
     );
   }
 
+  // Interpreta lo escrito: admite nombre normal o "#numero" (número de Pokédex)
+  function parseSearchQuery(raw){
+    const trimmed = raw.trim();
+    if(trimmed.startsWith('#')){
+      const num = trimmed.slice(1).trim();
+      if(/^\d+$/.test(num)) return { value: num, valid: true };
+      return { value: num, valid: false };
+    }
+    return { value: trimmed.toLowerCase(), valid: true };
+  }
+
   async function doPokemonSearch(){
     const raw = document.getElementById('pokeSearchInput').value;
-    const query = raw.trim().toLowerCase();
     const zone = document.getElementById('pokeResultZone');
-    if(!query){ zone.innerHTML = ''; return; }
+    if(!raw.trim()){ zone.innerHTML = ''; return; }
+
+    const parsed = parseSearchQuery(raw);
+    if(!parsed.valid){
+      zone.innerHTML = '<div class="error-state"><div class="big">Número no válido</div>' +
+        'Después de «#» solo se aceptan números, por ejemplo «#25».</div>';
+      return;
+    }
+    const query = parsed.value;
 
     zone.innerHTML = loadingHTML();
 
@@ -78,7 +96,7 @@
       if(seeded){
         zone.innerHTML = renderPokemonCard(seeded, true);
         wireCard(seeded);
-      } else if(lsGet('td_pokemon_' + query) === null && query){
+      } else if(query){
         zone.innerHTML = errorHTML(raw.trim());
       }
       return;
@@ -108,7 +126,9 @@
         speed: statMap.speed
       }
     };
-    lsSet('td_pokemon_' + query, p); // caché simplificada para uso offline / favoritos
+    // caché simplificada para uso offline / favoritos, guardada por nombre Y por número
+    lsSet('td_pokemon_' + p.name, p);
+    lsSet('td_pokemon_' + String(p.id), p);
 
     zone.innerHTML = renderPokemonCard(p, result.fromCache);
     wireCard(p);
@@ -264,10 +284,79 @@
     }
   }
 
-  document.getElementById('pokeSearchInput').addEventListener('input', function(){
+  /* ---------- autocompletado ---------- */
+  let pokemonIndexPromise = null;
+
+  async function ensurePokemonIndex(){
+    const cached = lsGet('td_pokemon_index');
+    if(cached && cached.length) return cached;
+    if(pokemonIndexPromise) return pokemonIndexPromise;
+    pokemonIndexPromise = (async function(){
+      try{
+        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000');
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        const list = json.results.map(function(r){ return { name: r.name, id: extractIdFromUrl(r.url) }; });
+        lsSet('td_pokemon_index', list);
+        return list;
+      }catch(e){
+        return cached || [];
+      }
+    })();
+    return pokemonIndexPromise;
+  }
+
+  function hideSuggestions(){
+    const box = document.getElementById('pokeSuggestions');
+    box.style.display = 'none';
+    box.innerHTML = '';
+  }
+
+  async function updateSuggestions(rawQuery){
+    const box = document.getElementById('pokeSuggestions');
+    const q = rawQuery.trim().toLowerCase();
+    if(!q || q.startsWith('#')){ hideSuggestions(); return; }
+
+    const list = await ensurePokemonIndex();
+    if(!list.length){ hideSuggestions(); return; }
+
+    const matches = list.filter(function(p){ return p.name.indexOf(q) === 0; }).slice(0, 6);
+    if(!matches.length){ hideSuggestions(); return; }
+
+    box.innerHTML = matches.map(function(p){
+      return '<div class="suggestion-item" data-name="' + p.name + '">' +
+        '<span class="sid">#' + String(p.id).padStart(3, '0') + '</span>' +
+        '<span class="sname">' + p.name + '</span></div>';
+    }).join('');
+    box.style.display = 'block';
+
+    box.querySelectorAll('.suggestion-item').forEach(function(item){
+      item.addEventListener('mousedown', function(e){ e.preventDefault(); }); // evita perder el foco antes del click
+      item.addEventListener('click', function(){
+        document.getElementById('pokeSearchInput').value = item.dataset.name;
+        hideSuggestions();
+        doPokemonSearch();
+      });
+    });
+  }
+
+  const searchInputEl = document.getElementById('pokeSearchInput');
+
+  searchInputEl.addEventListener('input', function(){
+    updateSuggestions(this.value);
     clearTimeout(window._searchDebounce);
     window._searchDebounce = setTimeout(doPokemonSearch, 350);
   });
+
+  searchInputEl.addEventListener('blur', function(){
+    setTimeout(hideSuggestions, 120); // deja tiempo al click de una sugerencia
+  });
+
+  searchInputEl.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ hideSuggestions(); doPokemonSearch(); }
+  });
+
+  ensurePokemonIndex(); // precarga en segundo plano para que el primer tecleo ya tenga sugerencias
 
   document.getElementById('pokeSearchInput').value = 'pikachu';
   doPokemonSearch();
