@@ -1,0 +1,14 @@
+{
+  "name": "Pokedex",
+  "short_name": "Pokedex",
+  "description": "Consulta qué tipo de Pokémon vence a cuál, con datos en vivo de PokeAPI.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1B1F2A",
+  "theme_color": "#1B1F2A",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
