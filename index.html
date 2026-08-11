@@ -101,6 +101,15 @@
 <script src="matchup-engine.js"></script>
 <script src="pokemon-view.js"></script>
 <script src="types-view.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(err){
+        console.warn('No se pudo registrar el Service Worker:', err);
+      });
+    });
+  }
+</script>
 
 </body>
 </html>
