@@ -1,7 +1,7 @@
 /* ============================================================
-   data.js — Constantes de tipos y datos "semilla" para uso offline
-   Aquí es donde se sustituiría la tabla de tipos si se usan datos
-   propios en vez de (o además de) PokeAPI.
+   data.js — Constantes de tipos y tabla de relaciones de tipo
+   completa. Estos datos no cambian nunca, por eso viven aquí en
+   vez de pedirse a PokeAPI en cada consulta.
    ============================================================ */
 
   const TYPE_LABELS = {
@@ -20,57 +20,25 @@
   Object.keys(ES_TO_EN).forEach(function(k){ EN_TO_ES[ES_TO_EN[k]] = k; });
   const ALL_EN_TYPES = Object.keys(EN_TO_ES);
 
-
-  // Pre-semilla: relaciones de tipo reales para que la demo funcione incluso sin red
-  const SEED_TYPES = {
-    electric: { double_from:['ground'], double_to:['water','flying'], half_from:['electric','flying','steel'], half_to:['electric','grass','dragon'], no_from:[], no_to:['ground'] },
-    rock:     { double_from:['water','grass','fighting','ground','steel'], double_to:['fire','ice','flying','bug'], half_from:['normal','fire','poison','flying'], half_to:['fighting','ground','steel'], no_from:[], no_to:[] },
-    ground:   { double_from:['water','grass','ice'], double_to:['fire','electric','poison','rock','steel'], half_from:['poison','rock'], half_to:['grass','bug'], no_from:['electric'], no_to:['flying'] }
+  // Tabla completa de relaciones de daño (los 18 tipos). Generada y
+  // verificada contra la tabla oficial de tipos de los juegos principales.
+  const TYPE_CHART = {
+    normal: { double_to:[], half_to:['rock','steel'], no_to:['ghost'], double_from:['fighting'], half_from:[], no_from:['ghost'] },
+    fire: { double_to:['grass','ice','bug','steel'], half_to:['fire','water','rock','dragon'], no_to:[], double_from:['water','ground','rock'], half_from:['fire','grass','ice','bug','steel','fairy'], no_from:[] },
+    water: { double_to:['fire','ground','rock'], half_to:['water','grass','dragon'], no_to:[], double_from:['electric','grass'], half_from:['fire','water','ice','steel'], no_from:[] },
+    electric: { double_to:['water','flying'], half_to:['electric','grass','dragon'], no_to:['ground'], double_from:['ground'], half_from:['electric','flying','steel'], no_from:[] },
+    grass: { double_to:['water','ground','rock'], half_to:['fire','grass','poison','flying','bug','dragon','steel'], no_to:[], double_from:['fire','ice','poison','flying','bug'], half_from:['water','electric','grass','ground'], no_from:[] },
+    ice: { double_to:['grass','ground','flying','dragon'], half_to:['fire','water','ice','steel'], no_to:[], double_from:['fire','fighting','rock','steel'], half_from:['ice'], no_from:[] },
+    fighting: { double_to:['normal','ice','rock','dark','steel'], half_to:['poison','flying','psychic','bug','fairy'], no_to:['ghost'], double_from:['flying','psychic','fairy'], half_from:['bug','rock','dark'], no_from:[] },
+    poison: { double_to:['grass','fairy'], half_to:['poison','ground','rock','ghost'], no_to:['steel'], double_from:['ground','psychic'], half_from:['grass','fighting','poison','bug','fairy'], no_from:[] },
+    ground: { double_to:['fire','electric','poison','rock','steel'], half_to:['grass','bug'], no_to:['flying'], double_from:['water','grass','ice'], half_from:['poison','rock'], no_from:['electric'] },
+    flying: { double_to:['grass','fighting','bug'], half_to:['electric','rock','steel'], no_to:[], double_from:['electric','ice','rock'], half_from:['grass','fighting','bug'], no_from:['ground'] },
+    psychic: { double_to:['fighting','poison'], half_to:['psychic','steel'], no_to:['dark'], double_from:['bug','ghost','dark'], half_from:['fighting','psychic'], no_from:[] },
+    bug: { double_to:['grass','psychic','dark'], half_to:['fire','fighting','poison','flying','ghost','steel','fairy'], no_to:[], double_from:['fire','flying','rock'], half_from:['grass','fighting','ground'], no_from:[] },
+    rock: { double_to:['fire','ice','flying','bug'], half_to:['fighting','ground','steel'], no_to:[], double_from:['water','grass','fighting','ground','steel'], half_from:['normal','fire','poison','flying'], no_from:[] },
+    ghost: { double_to:['psychic','ghost'], half_to:['dark'], no_to:['normal'], double_from:['ghost','dark'], half_from:['poison','bug'], no_from:['normal','fighting'] },
+    dragon: { double_to:['dragon'], half_to:['steel'], no_to:['fairy'], double_from:['ice','dragon','fairy'], half_from:['fire','water','electric','grass'], no_from:[] },
+    dark: { double_to:['psychic','ghost'], half_to:['fighting','dark','fairy'], no_to:[], double_from:['fighting','bug','fairy'], half_from:['ghost','dark'], no_from:['psychic'] },
+    steel: { double_to:['ice','rock','fairy'], half_to:['fire','water','electric','steel'], no_to:[], double_from:['fire','fighting','ground'], half_from:['normal','grass','ice','flying','psychic','bug','rock','dragon','steel','fairy'], no_from:['poison'] },
+    fairy: { double_to:['fighting','dragon','dark'], half_to:['fire','poison','steel'], no_to:[], double_from:['poison','steel'], half_from:['fighting','bug','dark'], no_from:['dragon'] },
   };
-  Object.keys(SEED_TYPES).forEach(function(slug){
-    if(!lsGet('td_type_' + slug)) lsSet('td_type_' + slug, SEED_TYPES[slug]);
-  });
-
-  // Pre-semilla de Pikachu y Onix (para que el buscador funcione sin conexión la primera vez)
-  const SEED_POKEMON = {
-    pikachu: { id:25, name:'pikachu', types:['electric'], height:4, weight:60,
-      sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png',
-      stats:{hp:35, attack:55, defense:40, 'special-attack':50, 'special-defense':50, speed:90} },
-    onix: { id:95, name:'onix', types:['rock','ground'], height:88, weight:2100,
-      sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/95.png',
-      stats:{hp:35, attack:45, defense:160, 'special-attack':30, 'special-defense':45, speed:70} }
-  };
-  Object.keys(SEED_POKEMON).forEach(function(name){
-    if(!lsGet('td_pokemon_' + name)) lsSet('td_pokemon_' + name, SEED_POKEMON[name]);
-    const idKey = String(SEED_POKEMON[name].id);
-    if(!lsGet('td_pokemon_' + idKey)) lsSet('td_pokemon_' + idKey, SEED_POKEMON[name]);
-  });
-
-  // Semilla de cadenas evolutivas (para que funcionen sin conexión la primera vez)
-  const SEED_SPECIES = {
-    pikachu: { evolutionChainUrl: 'https://pokeapi.co/api/v2/evolution-chain/10/' },
-    onix:    { evolutionChainUrl: 'https://pokeapi.co/api/v2/evolution-chain/67/' }
-  };
-  Object.keys(SEED_SPECIES).forEach(function(name){
-    if(!lsGet('td_species_' + name)) lsSet('td_species_' + name, SEED_SPECIES[name]);
-  });
-
-  const SEED_EVOCHAINS = {
-    '10': { species:{ name:'pichu', url:'https://pokeapi.co/api/v2/pokemon-species/172/' }, evolution_details:[], evolves_to:[
-      { species:{ name:'pikachu', url:'https://pokeapi.co/api/v2/pokemon-species/25/' },
-        evolution_details:[{ trigger:{name:'level-up'}, min_level:null, min_happiness:220, item:null, held_item:null, time_of_day:'', known_move:null, known_move_type:null, location:null, gender:null }],
-        evolves_to:[
-          { species:{ name:'raichu', url:'https://pokeapi.co/api/v2/pokemon-species/26/' },
-            evolution_details:[{ trigger:{name:'use-item'}, min_level:null, min_happiness:null, item:{name:'thunder-stone'}, held_item:null, time_of_day:'', known_move:null, known_move_type:null, location:null, gender:null }],
-            evolves_to:[] }
-        ] }
-    ] },
-    '67': { species:{ name:'onix', url:'https://pokeapi.co/api/v2/pokemon-species/95/' }, evolution_details:[], evolves_to:[
-      { species:{ name:'steelix', url:'https://pokeapi.co/api/v2/pokemon-species/208/' },
-        evolution_details:[{ trigger:{name:'trade'}, min_level:null, min_happiness:null, item:null, held_item:{name:'metal-coat'}, time_of_day:'', known_move:null, known_move_type:null, location:null, gender:null }],
-        evolves_to:[] }
-    ] }
-  };
-  Object.keys(SEED_EVOCHAINS).forEach(function(id){
-    if(!lsGet('td_evochain_' + id)) lsSet('td_evochain_' + id, SEED_EVOCHAINS[id]);
-  });
