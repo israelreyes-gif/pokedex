@@ -6,15 +6,24 @@
 
   async function cachedFetchJSON(url, cacheKey){
     const cached = lsGet(cacheKey);
+    let res;
     try{
-      const res = await fetch(url);
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      return { data: data, fromCache: false };
-    }catch(err){
+      res = await fetch(url);
+    }catch(networkErr){
+      // fallo real de red (sin conexión, dominio bloqueado, etc.)
       if(cached) return { data: cached, fromCache: true, offline: true };
-      throw err;
+      throw { kind: 'network' };
     }
+    if(res.status === 404){
+      // la petición SÍ llegó: PokeAPI responde que ese Pokémon/tipo no existe
+      return { notFound: true };
+    }
+    if(!res.ok){
+      if(cached) return { data: cached, fromCache: true, offline: true };
+      throw { kind: 'server', status: res.status };
+    }
+    const data = await res.json();
+    return { data: data, fromCache: false };
   }
 
   async function getTypeRelations(enSlug){
@@ -102,6 +111,9 @@
       'No hay conexión y «' + query + '» no está en la caché local todavía.</div>';
   }
   function emptyHTML(query){
-    return '<div class="empty-state"><div class="big">Sin resultados</div>' +
-      'No existe ningún Pokémon llamado «' + query + '».</div>';
+    const esNumero = /^#?\d+$/.test(query.trim());
+    const detalle = esNumero
+      ? 'No existe ningún Pokémon con el número «' + query + '».'
+      : 'No existe ningún Pokémon llamado «' + query + '».';
+    return '<div class="empty-state"><div class="big">Sin resultados</div>' + detalle + '</div>';
   }
