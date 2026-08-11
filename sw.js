@@ -5,7 +5,7 @@
    Cada vez que se abre con conexión, la caché se refresca sola.
    ============================================================ */
 
-const CACHE_NAME = 'pokedex-shell-v1'; // sube el número si algún día quieres forzar limpieza de caché
+const CACHE_NAME = 'pokedex-shell-v2'; // sube el número si algún día quieres forzar limpieza de caché
 
 const APP_SHELL = [
   './',
@@ -17,7 +17,7 @@ const APP_SHELL = [
   './pokemon-view.js',
   './types-view.js',
   './manifest.json',
-  './icon.svg'
+  './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', function(event){
