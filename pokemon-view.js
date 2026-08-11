@@ -41,7 +41,6 @@
   /* ---------- ficha de Pokémon ---------- */
   function renderPokemonCard(p){
     const typeChips = p.types.map(function(en){ return typeChip(EN_TO_ES[en]); }).join('');
-    const category = p.types.length > 1 ? 'Pokémon complejo' : 'Pokémon simple';
     const heightM = (p.height / 10).toFixed(1) + ' m';
     const weightKg = (p.weight / 10).toFixed(1) + ' kg';
     const fav = isFavorite(p.name);
@@ -69,7 +68,6 @@
             '<div class="stat-box"><div class="val">' + p.stats['special-attack'] + '</div><div class="lbl">At. Esp.</div></div>' +
             '<div class="stat-box"><div class="val">' + p.stats['special-defense'] + '</div><div class="lbl">Def. Esp.</div></div>' +
           '</div>' +
-          '<div class="info-line"><span class="k">Categoría</span><span class="v">' + category + '</span></div>' +
           '<div class="info-line"><span class="k">Altura / Peso</span><span class="v">' + heightM + ' · ' + weightKg + '</span></div>' +
           '<div id="pokeMatchupSlot"><div class="matchup-block"><div class="matchup-title">Calculando ventajas y debilidades…</div></div></div>' +
           '<div id="pokeEvoSlot"><div class="matchup-block"><div class="matchup-title">Cargando cadena evolutiva…</div></div></div>' +
