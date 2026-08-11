@@ -91,6 +91,7 @@
     margin-bottom:8px; display:flex; align-items:center; gap:6px; }
   .row-title.fuerte{ color:var(--planta); }
   .row-title.debil{ color:var(--fuego); }
+  .row-title.resiste{ color:var(--planta); }
   .row-title.inmune{ color:var(--muted); }
 
   .tag-list{ display:flex; flex-wrap:wrap; gap:6px; }
