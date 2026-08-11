@@ -90,18 +90,19 @@
     try{
       result = await cachedFetchJSON('https://pokeapi.co/api/v2/pokemon/' + query, 'td_pokemon_raw_' + query);
     }catch(err){
-      // sin red y sin caché: probamos la caché "simplificada" de semillas
+      // fallo real de red/servidor y sin caché: probamos la caché "simplificada" de semillas
       const seeded = lsGet('td_pokemon_' + query);
       if(seeded){
         zone.innerHTML = renderPokemonCard(seeded);
         wireCard(seeded);
-      } else if(query){
+      } else {
         zone.innerHTML = errorHTML(raw.trim());
       }
       return;
     }
 
-    if(result.data && result.data.status === undefined && result.data.name === undefined){
+    if(result.notFound){
+      // la petición sí llegó: este Pokémon/número simplemente no existe
       zone.innerHTML = emptyHTML(raw.trim());
       return;
     }
