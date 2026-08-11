@@ -225,33 +225,70 @@
     return parts.filter(Boolean).join(' · ');
   }
 
+  const EVO_ARROW_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>';
+
+  // Cadena sin ramas: lista lineal (ej. Pichu → Pikachu → Raichu).
+  // Cadena con ramas: el nodo se muestra destacado y sus evoluciones
+  // posibles aparecen en una rejilla, cada una con su propia condición
+  // (ej. Eevee → Vaporeon / Jolteon / Flareon / …).
   function renderEvoTree(node, depth, incomingDetails, currentName){
     const id = extractIdFromUrl(node.species.url);
     const sprite = spriteUrlForId(id);
     const isCurrent = node.species.name === currentName;
+    const children = node.evolves_to || [];
+
     let html = '';
     if(incomingDetails !== null && incomingDetails !== undefined){
       const label = evoConditionLabel(incomingDetails);
-      html += '<div class="evo-arrow" style="padding-left:' + (20 + depth * 14) + 'px;">' +
-        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>' +
-        (label || 'Evoluciona') + '</div>';
+      html += '<div class="evo-arrow">' + EVO_ARROW_SVG + (label || 'Evoluciona') + '</div>';
     }
-    html += '<div class="evo-node' + (isCurrent ? ' current' : '') + '" data-name="' + node.species.name + '" style="margin-left:' + (depth * 14) + 'px;">' +
-      '<img class="evo-node-img" src="' + sprite + '" alt="' + node.species.name + '">' +
-      '<span class="evo-node-name">' + node.species.name + '</span>' +
-      (isCurrent ? '<span class="evo-current-badge">actual</span>' : '') +
-      '</div>';
-    if(node.evolves_to && node.evolves_to.length){
-      node.evolves_to.forEach(function(child){
+
+    if(children.length > 1){
+      html += '<div class="evo-root' + (isCurrent ? ' current' : '') + '" data-name="' + node.species.name + '">' +
+        '<img class="evo-root-img" src="' + sprite + '" alt="' + node.species.name + '">' +
+        '<span class="evo-root-name">' + node.species.name + '</span>' +
+        (isCurrent ? '<span class="evo-current-badge">actual</span>' : '') +
+        '</div>';
+      html += '<div class="evo-branch-label">' + EVO_ARROW_SVG +
+        'Evoluciona a una de estas ' + children.length + ' formas, según la condición:</div>';
+      html += '<div class="evo-grid">';
+      children.forEach(function(child){
+        const cId = extractIdFromUrl(child.species.url);
+        const cSprite = spriteUrlForId(cId);
+        const cIsCurrent = child.species.name === currentName;
+        const details = (child.evolution_details && child.evolution_details[0]) || null;
+        const condLabel = evoConditionLabel(details) || 'Evoluciona';
+        html += '<div class="evo-branch-card' + (cIsCurrent ? ' current' : '') + '" data-name="' + child.species.name + '">' +
+          '<img src="' + cSprite + '" alt="' + child.species.name + '">' +
+          '<div class="name">' + child.species.name + '</div>' +
+          '<div class="cond">' + condLabel + '</div>' +
+          (cIsCurrent ? '<span class="evo-current-badge">actual</span>' : '') +
+          '</div>';
+      });
+      html += '</div>';
+      // caso raro: una rama tiene a su vez más evoluciones tras la rejilla
+      children.forEach(function(child){
+        if(child.evolves_to && child.evolves_to.length){
+          html += renderEvoTree(child, depth + 1, null, currentName);
+        }
+      });
+    } else {
+      html += '<div class="evo-node' + (isCurrent ? ' current' : '') + '" data-name="' + node.species.name + '">' +
+        '<img class="evo-node-img" src="' + sprite + '" alt="' + node.species.name + '">' +
+        '<span class="evo-node-name">' + node.species.name + '</span>' +
+        (isCurrent ? '<span class="evo-current-badge">actual</span>' : '') +
+        '</div>';
+      if(children.length === 1){
+        const child = children[0];
         const details = (child.evolution_details && child.evolution_details[0]) || null;
         html += renderEvoTree(child, depth + 1, details, currentName);
-      });
+      }
     }
     return html;
   }
 
   function wireEvoNodes(container, currentName){
-    container.querySelectorAll('.evo-node').forEach(function(node){
+    container.querySelectorAll('.evo-node, .evo-root, .evo-branch-card').forEach(function(node){
       if(node.dataset.name === currentName) return; // el actual no navega
       node.addEventListener('click', function(){
         document.getElementById('pokeSearchInput').value = node.dataset.name;
