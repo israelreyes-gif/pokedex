@@ -1,7 +1,7 @@
 /* ============================================================
-   matchup-engine.js — Motor de tipos: relaciones de daño (tabla
-   local), cálculo de multiplicadores, y componentes visuales
-   reutilizables (chips, etiquetas, estados de carga/error)
+   matchup-engine.js — Motor de tipos: llamadas a PokeAPI para
+   relaciones de daño, cálculo de multiplicadores, y componentes
+   visuales reutilizables (chips, etiquetas, estados de carga/error)
    ============================================================ */
 
   async function cachedFetchJSON(url, cacheKey){
@@ -11,7 +11,7 @@
       res = await fetch(url);
     }catch(networkErr){
       // fallo real de red (sin conexión, dominio bloqueado, etc.)
-      if(cached) return { data: cached, fromCache: true, offline: true };
+      if(cached) return { data: cached };
       throw { kind: 'network' };
     }
     if(res.status === 404){
@@ -19,17 +19,17 @@
       return { notFound: true };
     }
     if(!res.ok){
-      if(cached) return { data: cached, fromCache: true, offline: true };
+      if(cached) return { data: cached };
       throw { kind: 'server', status: res.status };
     }
     const data = await res.json();
-    return { data: data, fromCache: false };
+    return { data: data };
   }
 
   // Las relaciones de tipo son datos fijos (nunca cambian), así que
   // se leen directamente de TYPE_CHART en vez de pedirlas a PokeAPI.
-  async function getTypeRelations(enSlug){
-    return { rel: TYPE_CHART[enSlug], fromCache: false };
+  function getTypeRelations(enSlug){
+    return TYPE_CHART[enSlug];
   }
 
   function multFrom(rel, attackerEn){
