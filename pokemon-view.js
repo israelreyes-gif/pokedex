@@ -347,8 +347,14 @@
   }
 
   const searchInputEl = document.getElementById('pokeSearchInput');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+  function updateClearBtn(){
+    clearSearchBtn.style.display = searchInputEl.value ? 'block' : 'none';
+  }
 
   searchInputEl.addEventListener('input', function(){
+    updateClearBtn();
     updateSuggestions(this.value);
     clearTimeout(window._searchDebounce);
     window._searchDebounce = setTimeout(doPokemonSearch, 350);
@@ -360,6 +366,14 @@
 
   searchInputEl.addEventListener('keydown', function(e){
     if(e.key === 'Enter'){ hideSuggestions(); doPokemonSearch(); }
+  });
+
+  clearSearchBtn.addEventListener('click', function(){
+    searchInputEl.value = '';
+    updateClearBtn();
+    hideSuggestions();
+    document.getElementById('pokeResultZone').innerHTML = '';
+    searchInputEl.focus();
   });
 
   ensurePokemonIndex(); // precarga en segundo plano para que el primer tecleo ya tenga sugerencias
