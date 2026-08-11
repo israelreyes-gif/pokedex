@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1B1F2A"/>
+  <circle cx="256" cy="256" r="176" fill="none" stroke="url(#ringGrad)" stroke-width="14"/>
+  <g transform="translate(256 256) rotate(45)">
+    <rect x="-96" y="-96" width="192" height="192" rx="28" fill="url(#diamondGrad)"/>
+  </g>
+  <circle cx="256" cy="256" r="46" fill="#242938" stroke="#FFD23F" stroke-width="10"/>
+  <circle cx="256" cy="256" r="16" fill="#FFD23F"/>
+  <defs>
+    <linearGradient id="diamondGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B4A"/>
+      <stop offset="100%" stop-color="#3DA9FC"/>
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B4A" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#3DA9FC" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+</svg>
