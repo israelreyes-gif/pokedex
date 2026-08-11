@@ -70,18 +70,30 @@
     const mult = entry.m ? '<span class="mult">' + entry.m + '</span>' : '';
     return '<span class="tag"><span class="dot t-' + entry.t + '"></span>' + label + mult + '</span>';
   }
-  function renderMatchupBlock(matchup, title){
-    let html = '<div class="matchup-block">';
+  function renderMatchupBlock(matchup, title, opts){
+    opts = opts || {};
+    let html = opts.standalone ? '<div>' : '<div class="matchup-block">';
     if(title) html += '<div class="matchup-title">' + title + '</div>';
+
+    // ATAQUE: si este tipo/Pokémon ataca, ¿a quién le hace mucho daño?
+    html += '<div class="matchup-section">';
+    html += '<div class="matchup-section-title">Ataque</div>';
     html += '<div class="row-group"><div class="row-title fuerte">▲ Fuerte contra</div><div class="tag-list">';
     html += matchup.fuerte.length ? matchup.fuerte.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
     html += '</div></div>';
+    html += '</div>';
+
+    // DEFENSA: si a este tipo/Pokémon le atacan, ¿qué le afecta?
+    html += '<div class="matchup-section">';
+    html += '<div class="matchup-section-title">Defensa</div>';
     html += '<div class="row-group"><div class="row-title debil">▼ Débil contra</div><div class="tag-list">';
     html += matchup.debil.length ? matchup.debil.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
     html += '</div></div>';
     html += '<div class="row-group"><div class="row-title inmune">● Sin efecto</div><div class="tag-list">';
     html += matchup.inmune.length ? matchup.inmune.map(matchupTag).join('') : '<span class="tag">— ninguno —</span>';
     html += '</div></div>';
+    html += '</div>';
+
     html += '</div>';
     return html;
   }
