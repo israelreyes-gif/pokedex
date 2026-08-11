@@ -7,17 +7,36 @@
     const favs = getFavorites();
     const row = document.getElementById('favRow');
     const chips = document.getElementById('favChips');
-    if(!favs.length){ row.style.display = 'none'; chips.innerHTML=''; return; }
     row.style.display = 'block';
+
+    if(!favs.length){
+      chips.innerHTML = '<div class="fav-empty">Guarda tus Pokémon favoritos tocando la ☆ en su ficha, para acceder rápido a ellos.</div>';
+      return;
+    }
+
     chips.innerHTML = favs.map(function(name){
       const cached = lsGet('td_pokemon_' + name);
-      const dotType = cached && cached.types[0] ? EN_TO_ES[cached.types[0]] : 'normal';
-      return '<div class="fav-chip" data-name="' + name + '"><span class="fdot t-' + dotType + '"></span>' +
-        name.charAt(0).toUpperCase() + name.slice(1) + '</div>';
+      const typesHtml = (cached && cached.types)
+        ? cached.types.map(function(en){ return typeChip(EN_TO_ES[en]); }).join('')
+        : '';
+      const sprite = (cached && cached.sprite) ? cached.sprite : '';
+      return '<div class="fav-card" data-name="' + name + '">' +
+        '<button class="fav-remove-btn" data-name="' + name + '" aria-label="Quitar de favoritos">✕</button>' +
+        (sprite ? '<img class="fav-card-img" src="' + sprite + '" alt="' + name + '">' : '<div class="fav-card-img"></div>') +
+        '<div class="fav-card-name">' + name.charAt(0).toUpperCase() + name.slice(1) + '</div>' +
+        '<div class="fav-card-types">' + typesHtml + '</div>' +
+      '</div>';
     }).join('');
-    chips.querySelectorAll('.fav-chip').forEach(function(chip){
-      chip.addEventListener('click', function(){
-        document.getElementById('pokeSearchInput').value = chip.dataset.name;
+
+    chips.querySelectorAll('.fav-remove-btn').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation(); // que no dispare también el click de la tarjeta
+        toggleFavorite(btn.dataset.name);
+      });
+    });
+    chips.querySelectorAll('.fav-card').forEach(function(card){
+      card.addEventListener('click', function(){
+        document.getElementById('pokeSearchInput').value = card.dataset.name;
         doPokemonSearch();
       });
     });
