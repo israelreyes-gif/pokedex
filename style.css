@@ -90,6 +90,7 @@
   .row-title{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; font-weight:700;
     margin-bottom:8px; display:flex; align-items:center; gap:6px; }
   .row-title.fuerte{ color:var(--planta); }
+  .row-title.flojo{ color:var(--fuego); }
   .row-title.debil{ color:var(--fuego); }
   .row-title.resiste{ color:var(--planta); }
   .row-title.inmune{ color:var(--muted); }
