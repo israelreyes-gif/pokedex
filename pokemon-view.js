@@ -167,11 +167,7 @@
       });
     }
     try{
-      const rels = [];
-      for(const enType of p.types){
-        const r = await getTypeRelations(enType);
-        rels.push(r.rel);
-      }
+      const rels = p.types.map(function(enType){ return getTypeRelations(enType); });
       const matchup = computeMatchup(rels);
       const slot = document.getElementById('pokeMatchupSlot');
       if(slot) slot.innerHTML = renderMatchupBlock(matchup, 'Ventajas y debilidades de tipo');
