@@ -32,6 +32,26 @@
     return TYPE_CHART[enSlug];
   }
 
+  // Lista de Pokémon que tienen un tipo determinado (para "Ejemplos de este tipo").
+  // Esto sí cambia según el juego/generación, así que se pide a PokeAPI y se cachea.
+  async function getTypePokemonList(enSlug){
+    const cacheKey = 'td_type_pokemon_' + enSlug;
+    const cached = lsGet(cacheKey);
+    if(cached) return cached;
+    try{
+      const res = await fetch('https://pokeapi.co/api/v2/type/' + enSlug);
+      if(!res.ok) throw { kind: 'server', status: res.status };
+      const json = await res.json();
+      const list = json.pokemon.map(function(p){
+        return { name: p.pokemon.name, id: extractIdFromUrl(p.pokemon.url) };
+      });
+      lsSet(cacheKey, list);
+      return list;
+    }catch(e){
+      throw e;
+    }
+  }
+
   function multFrom(rel, attackerEn){
     if(rel.no_from.indexOf(attackerEn) !== -1) return 0;
     if(rel.double_from.indexOf(attackerEn) !== -1) return 2;
