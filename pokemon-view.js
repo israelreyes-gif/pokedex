@@ -184,7 +184,7 @@
       if(slot) slot.innerHTML = renderMatchupBlock(matchup, 'Ventajas y debilidades de tipo');
     }catch(e){
       const slot = document.getElementById('pokeMatchupSlot');
-      if(slot) slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">No se pudieron calcular (sin conexión ni caché para este tipo)</div></div>';
+      if(slot) slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">No se pudieron calcular las ventajas y debilidades de tipo.</div></div>';
     }
     loadEvolutionSection(p);
   }
