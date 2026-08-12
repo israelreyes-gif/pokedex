@@ -51,6 +51,18 @@
     });
   }
 
+  // El cálculo de ventajas/debilidades es local e instantáneo (no depende
+  // de red), así que se resuelve directamente al construir la ficha.
+  function computeMatchupHtml(types){
+    try{
+      const rels = types.map(function(t){ return getTypeRelations(t); });
+      const matchup = computeMatchup(rels);
+      return renderMatchupBlock(matchup, 'Ventajas y debilidades de tipo');
+    }catch(e){
+      return '<div class="matchup-block"><div class="matchup-title">No se pudieron calcular las ventajas y debilidades de tipo.</div></div>';
+    }
+  }
+
   /* ---------- ficha de Pokémon ---------- */
   function renderPokemonCard(p){
     const typeChips = p.types.map(function(en){ return typeChip(EN_TO_ES[en]); }).join('');
@@ -82,7 +94,7 @@
             '<div class="stat-box"><div class="val">' + p.stats['special-defense'] + '</div><div class="lbl">Def. Esp.</div></div>' +
           '</div>' +
           '<div class="info-line"><span class="k">Altura / Peso</span><span class="v">' + heightM + ' · ' + weightKg + '</span></div>' +
-          '<div id="pokeMatchupSlot"><div class="matchup-block"><div class="matchup-title">Calculando ventajas y debilidades…</div></div></div>' +
+          computeMatchupHtml(p.types) +
           '<div id="pokeEvoSlot"><div class="matchup-block"><div class="matchup-title">Cargando cadena evolutiva…</div></div></div>' +
         '</div>' +
       '</div>'
@@ -163,7 +175,7 @@
     wireCard(p);
   }
 
-  async function wireCard(p){
+  function wireCard(p){
     const favBtn = document.getElementById('favBtn');
     if(favBtn){
       favBtn.addEventListener('click', function(){
@@ -177,16 +189,7 @@
         favBtn.setAttribute('title', label);
       });
     }
-    try{
-      const rels = p.types.map(function(enType){ return getTypeRelations(enType); });
-      const matchup = computeMatchup(rels);
-      const slot = document.getElementById('pokeMatchupSlot');
-      if(slot) slot.innerHTML = renderMatchupBlock(matchup, 'Ventajas y debilidades de tipo');
-    }catch(e){
-      const slot = document.getElementById('pokeMatchupSlot');
-      if(slot) slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">No se pudieron calcular las ventajas y debilidades de tipo.</div></div>';
-    }
-    loadEvolutionSection(p);
+    loadEvolutionSection(p); // esta parte sí es async de verdad (red)
   }
 
   /* ---------- cadena evolutiva ---------- */
