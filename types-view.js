@@ -63,9 +63,9 @@
     });
   }
 
-  async function runTypeQuery(esTypes){
+  function runTypeQuery(esTypes){
     const zone = document.getElementById('typeResultZone');
-    zone.innerHTML = loadingHTML();
+    // Sin estado de "cargando": el cálculo es local e instantáneo (no depende de red).
     try{
       const rels = [];
       esTypes.forEach(function(es){ rels.push(getTypeRelations(ES_TO_EN[es])); });
