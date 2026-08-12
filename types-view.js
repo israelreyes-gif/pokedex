@@ -83,7 +83,8 @@
         '</div></div>';
       loadTypeExamples(esTypes);
     }catch(e){
-      zone.innerHTML = errorHTML(esTypes.map(function(es){return TYPE_LABELS[es];}).join(' / '));
+      zone.innerHTML = '<div class="error-state"><div class="big">No se pudo calcular</div>' +
+        'Ha habido un problema al calcular las ventajas y debilidades de este tipo.</div>';
     }
   }
 
