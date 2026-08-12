@@ -135,7 +135,7 @@
       });
     }catch(e){
       slot.innerHTML = '<div class="examples-title">' + title + '</div>' +
-        '<div style="font-size:12px;color:var(--muted);">No disponible sin conexión.</div>';
+        '<div style="font-size:12px;color:var(--muted);">No se pudieron cargar los ejemplos.</div>';
     }
   }
 
