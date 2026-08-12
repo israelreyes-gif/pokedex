@@ -1,7 +1,8 @@
 /* ============================================================
-   matchup-engine.js — Motor de tipos: llamadas a PokeAPI para
-   relaciones de daño, cálculo de multiplicadores, y componentes
-   visuales reutilizables (chips, etiquetas, estados de carga/error)
+   matchup-engine.js — Motor de tipos: relaciones de daño (locales,
+   tabla fija), lista de Pokémon por tipo (PokeAPI, para "Ejemplos"),
+   cálculo de multiplicadores, y componentes visuales reutilizables
+   (chips, etiquetas, estados de carga/error)
    ============================================================ */
 
   async function cachedFetchJSON(url, cacheKey){
