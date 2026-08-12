@@ -315,6 +315,8 @@
     });
   }
 
+  // Igual que con la ficha del Pokémon: la cadena evolutiva tampoco cambia
+  // nunca, así que si ya está guardada se usa directamente sin tocar la red.
   async function loadEvolutionSection(p){
     const slot = document.getElementById('pokeEvoSlot');
     if(!slot) return;
@@ -322,30 +324,28 @@
       const speciesCacheKey = 'td_species_' + p.name;
       const speciesCached = lsGet(speciesCacheKey);
       let evoChainUrl;
-      try{
+      if(speciesCached){
+        evoChainUrl = speciesCached.evolutionChainUrl;
+      } else {
         const res = await fetch('https://pokeapi.co/api/v2/pokemon-species/' + p.name);
         if(!res.ok) throw { kind: 'server', status: res.status };
         const json = await res.json();
         evoChainUrl = json.evolution_chain.url;
         lsSet(speciesCacheKey, { evolutionChainUrl: evoChainUrl });
-      }catch(e){
-        if(speciesCached) evoChainUrl = speciesCached.evolutionChainUrl;
-        else throw e;
       }
 
       const chainId = extractIdFromUrl(evoChainUrl.replace(/\/$/, ''));
       const chainCacheKey = 'td_evochain_' + chainId;
       const chainCached = lsGet(chainCacheKey);
       let chainRoot;
-      try{
+      if(chainCached){
+        chainRoot = chainCached;
+      } else {
         const res2 = await fetch(evoChainUrl);
         if(!res2.ok) throw { kind: 'server', status: res2.status };
         const json2 = await res2.json();
         chainRoot = json2.chain;
         lsSet(chainCacheKey, chainRoot);
-      }catch(e){
-        if(chainCached) chainRoot = chainCached;
-        else throw e;
       }
 
       slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">Cadena evolutiva</div>' +
