@@ -5,19 +5,19 @@
    Cada vez que se abre con conexión, la caché se refresca sola.
    ============================================================ */
 
-const CACHE_NAME = 'pokedex-shell-v3'; // sube el número si algún día quieres forzar limpieza de caché
+const CACHE_NAME = 'pokedex-shell-v4'; // sube el número si algún día quieres forzar limpieza de caché
 
 const APP_SHELL = [
   './',
   './index.html',
-  './style.css',
-  './storage.js',
-  './data.js',
-  './matchup-engine.js',
-  './pokemon-view.js',
-  './evolution-view.js',
-  './search-autocomplete.js',
-  './types-view.js',
+  './css/style.css',
+  './js/storage.js',
+  './js/data.js',
+  './js/matchup-engine.js',
+  './js/pokemon-view.js',
+  './js/evolution-view.js',
+  './js/search-autocomplete.js',
+  './js/types-view.js',
   './manifest.json',
   './apple-touch-icon.png'
 ];
