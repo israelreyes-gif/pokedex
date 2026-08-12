@@ -5,14 +5,17 @@
    (chips, etiquetas, estados de carga/error)
    ============================================================ */
 
+  // Los datos de un Pokémon (tipos, estadísticas, altura, peso) no cambian
+  // nunca, así que si ya está guardado se usa directamente sin tocar la red.
   async function cachedFetchJSON(url, cacheKey){
     const cached = lsGet(cacheKey);
+    if(cached) return { data: cached };
+
     let res;
     try{
       res = await fetch(url);
     }catch(networkErr){
-      // fallo real de red (sin conexión, dominio bloqueado, etc.)
-      if(cached) return { data: cached };
+      // fallo real de red (sin conexión, dominio bloqueado, etc.) y sin nada guardado
       throw { kind: 'network' };
     }
     if(res.status === 404){
@@ -20,10 +23,10 @@
       return { notFound: true };
     }
     if(!res.ok){
-      if(cached) return { data: cached };
       throw { kind: 'server', status: res.status };
     }
     const data = await res.json();
+    lsSet(cacheKey, data); // guardar la respuesta cruda para que la próxima vez no haga falta la red
     return { data: data };
   }
 
