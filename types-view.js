@@ -127,13 +127,18 @@
         '<div class="examples-row">' + examples.map(exampleCardHTML).join('') + '</div>';
 
       slot.querySelectorAll('.example-card').forEach(function(card){
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
         card.addEventListener('click', function(){ goToPokemon(card.dataset.name); });
+        addKeyboardActivation(card);
       });
     }catch(e){
       slot.innerHTML = '<div class="examples-title">' + title + '</div>' +
         '<div style="font-size:12px;color:var(--muted);">No disponible sin conexión.</div>';
     }
   }
+
+  // addKeyboardActivation() ya está definida en pokemon-view.js (se carga antes que este archivo)
 
   document.querySelectorAll('.hex').forEach(function(hex){
     hex.addEventListener('click', function(){
@@ -155,4 +160,5 @@
         runTypeQuery([esType]);
       }
     });
+    addKeyboardActivation(hex);
   });
