@@ -75,7 +75,7 @@
       }).join('');
       zone.innerHTML =
         '<div class="result"><div class="result-head">' + chipsHTML +
-        '<span class="vs" style="margin-left:auto;">datos en vivo</span></div>' +
+        '</div>' +
         '<div class="result-body">' + renderMatchupBlock(matchup, '', { standalone: true }) +
         '<div id="typeExamplesSlot" class="examples-section"><div class="examples-title">' +
           (esTypes.length > 1 ? 'Ejemplos de esta combinación' : 'Ejemplos de este tipo') +
