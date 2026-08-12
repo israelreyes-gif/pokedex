@@ -3,6 +3,16 @@
    cadena evolutiva y el buscador
    ============================================================ */
 
+  // Activa un elemento con Enter o Espacio, igual que si se hubiera pulsado
+  function addKeyboardActivation(el){
+    el.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        el.click();
+      }
+    });
+  }
+
   function renderFavRow(){
     const favs = getFavorites();
     const row = document.getElementById('favRow');
@@ -31,10 +41,13 @@
       });
     });
     chips.querySelectorAll('.fav-card').forEach(function(card){
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
       card.addEventListener('click', function(){
         document.getElementById('pokeSearchInput').value = card.dataset.name;
         doPokemonSearch();
       });
+      addKeyboardActivation(card);
     });
   }
 
@@ -289,10 +302,13 @@
   function wireEvoNodes(container, currentName){
     container.querySelectorAll('.evo-node, .evo-root, .evo-branch-card').forEach(function(node){
       if(node.dataset.name === currentName) return; // el actual no navega
+      node.setAttribute('role', 'button');
+      node.setAttribute('tabindex', '0');
       node.addEventListener('click', function(){
         document.getElementById('pokeSearchInput').value = node.dataset.name;
         doPokemonSearch();
       });
+      addKeyboardActivation(node);
     });
   }
 
@@ -388,12 +404,15 @@
     box.style.display = 'block';
 
     box.querySelectorAll('.suggestion-item').forEach(function(item){
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
       item.addEventListener('mousedown', function(e){ e.preventDefault(); }); // evita perder el foco antes del click
       item.addEventListener('click', function(){
         document.getElementById('pokeSearchInput').value = item.dataset.name;
         hideSuggestions();
         doPokemonSearch();
       });
+      addKeyboardActivation(item);
     });
   }
 
