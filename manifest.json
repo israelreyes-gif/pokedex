@@ -1,7 +1,7 @@
 {
   "name": "Pokedex",
   "short_name": "Pokedex",
-  "description": "Consulta qué tipo de Pokémon vence a cuál, con datos en vivo de PokeAPI.",
+  "description": "Consulta qué tipo de Pokémon vence a cuál.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
