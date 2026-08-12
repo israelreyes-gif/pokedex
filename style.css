@@ -14,6 +14,7 @@
   }
 
   *{box-sizing:border-box;}
+  :focus-visible{ outline:2px solid var(--electrico); outline-offset:2px; }
   html,body{
     margin:0; padding:0; height:100%; overflow:hidden;
     overscroll-behavior:none; touch-action:pan-y;
@@ -60,6 +61,7 @@
     opacity:.55; transition:opacity .2s, transform .15s, border-color .2s; text-align:center; line-height:1.1; padding:4px; }
   .hex:hover{ transform:translateY(-2px); }
   .hex.selected{ opacity:1; border-color:#fff; box-shadow:0 0 0 3px rgba(255,255,255,0.15); }
+  .hex:focus-visible{ outline:none; opacity:1; transform:translateY(-2px) scale(1.06); }
 
   .t-fuego{background:var(--fuego);} .t-agua{background:var(--agua);}
   .t-planta{background:var(--planta);} .t-electrico{background:var(--electrico);}
