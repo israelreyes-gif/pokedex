@@ -357,22 +357,37 @@
   /* ---------- autocompletado ---------- */
   let pokemonIndexPromise = null;
 
+  const POKEMON_INDEX_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 días
+
+  async function fetchFreshPokemonIndex(){
+    const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000');
+    if(!res.ok) throw { kind: 'server', status: res.status };
+    const json = await res.json();
+    const list = json.results.map(function(r){ return { name: r.name, id: extractIdFromUrl(r.url) }; });
+    lsSet('td_pokemon_index', list);
+    lsSet('td_pokemon_index_updated_at', Date.now());
+    return list;
+  }
+
+  // Usa el índice guardado al instante si existe (aunque sea antiguo), y si ha
+  // pasado bastante tiempo desde la última vez, lo refresca en segundo plano
+  // por si hay Pokémon nuevos (ej. una generación nueva). Así no hace falta
+  // pedir el listado completo en cada visita, pero tampoco se queda anticuado
+  // para siempre.
   async function ensurePokemonIndex(){
     const cached = lsGet('td_pokemon_index');
-    if(cached && cached.length) return cached;
-    if(pokemonIndexPromise) return pokemonIndexPromise;
-    pokemonIndexPromise = (async function(){
-      try{
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000');
-        if(!res.ok) throw { kind: 'server', status: res.status };
-        const json = await res.json();
-        const list = json.results.map(function(r){ return { name: r.name, id: extractIdFromUrl(r.url) }; });
-        lsSet('td_pokemon_index', list);
-        return list;
-      }catch(e){
-        return cached || [];
+    const updatedAt = lsGet('td_pokemon_index_updated_at') || 0;
+    const isStale = (Date.now() - updatedAt) > POKEMON_INDEX_MAX_AGE_MS;
+
+    if(cached && cached.length){
+      if(isStale && !pokemonIndexPromise){
+        pokemonIndexPromise = fetchFreshPokemonIndex().catch(function(){ return cached; });
       }
-    })();
+      return cached;
+    }
+
+    if(pokemonIndexPromise) return pokemonIndexPromise;
+    pokemonIndexPromise = fetchFreshPokemonIndex().catch(function(){ return cached || []; });
     return pokemonIndexPromise;
   }
 
