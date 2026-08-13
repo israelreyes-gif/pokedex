@@ -11,6 +11,60 @@
     return new Array(TEAM_SIZE).fill(null);
   }
   function setTeam(team){ lsSet('td_team', team); }
+  function isInTeam(name){ return getTeam().indexOf(name) !== -1; }
+
+  /* ---------- aviso breve (toast) ---------- */
+  let toastTimer = null;
+  function showToast(msg){
+    let el = document.getElementById('appToast');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'appToast';
+      el.className = 'toast';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2400);
+  }
+
+  // Añade/quita el Pokémon de la ficha actual a la primera celda libre del
+  // equipo (o lo quita, si ya estaba). Se llama desde el botón de la ficha
+  // en "Por Pokémon", no solo desde la propia pantalla de "Mi Equipo".
+  function toggleTeamMembership(p, btnEl){
+    const team = getTeam();
+    const idx = team.indexOf(p.name);
+
+    if(idx !== -1){
+      team[idx] = null;
+      setTeam(team);
+      updateTeamButtonUI(btnEl, false);
+      showToast(capName(p.name) + ' se ha quitado de tu equipo.');
+      return;
+    }
+
+    const emptyIdx = team.indexOf(null);
+    if(emptyIdx === -1){
+      showToast('Tu equipo ya está completo (6/6). Quita alguno antes de añadir otro.');
+      return;
+    }
+
+    team[emptyIdx] = p.name;
+    setTeam(team);
+    updateTeamButtonUI(btnEl, true);
+    showToast(capName(p.name) + ' añadido a tu equipo (' + (emptyIdx + 1) + '/6).');
+  }
+
+  function updateTeamButtonUI(btnEl, inTeam){
+    if(!btnEl) return;
+    btnEl.classList.toggle('active', inTeam);
+    btnEl.textContent = inTeam ? '✓' : '+';
+    const label = inTeam ? 'Quitar de tu equipo' : 'Añadir a tu equipo';
+    btnEl.setAttribute('aria-label', label);
+    btnEl.setAttribute('aria-pressed', inTeam);
+    btnEl.setAttribute('title', label);
+  }
 
   function renderTeamView(){
     renderTeamGrid();
@@ -120,10 +174,10 @@
     if(!p){
       try{
         const result = await cachedFetchJSON('https://pokeapi.co/api/v2/pokemon/' + name, 'td_pokemon_raw_' + name);
-        if(result.notFound) return; // no debería pasar, el nombre viene del índice verificado
+        if(result.notFound) return;
         p = normalizePokemonData(result.data);
       }catch(e){
-        return; // sin conexión y sin nada en caché: no se puede añadir ahora mismo
+        return;
       }
     }
 
