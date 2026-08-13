@@ -48,6 +48,12 @@
   .toggle.state-2 .slider{ transform:translateX(100%); }
   .pill-count{ font-family:'JetBrains Mono',monospace; font-size:10px; opacity:.6; }
 
+  .toggle.toggle-3{ grid-template-columns:1fr 1fr 1fr; }
+  .toggle.toggle-3 .slider{ width:calc(33.333% - 4px); }
+  .toggle.toggle-3[data-active="1"] .slider{ transform:translateX(100%); }
+  .toggle.toggle-3[data-active="2"] .slider{ transform:translateX(200%); }
+  .toggle.toggle-3 button{ font-size:11.5px; padding:10px 4px; }
+
   .mode-switch{ padding:0 20px 6px; }
   .mode-switch .toggle{ border-color: rgba(255,255,255,0.14); }
 
@@ -226,3 +232,49 @@
   .empty-state .big, .loading-state .big, .error-state .big{ font-family:'Space Grotesk',sans-serif; font-size:15px;
     font-weight:700; color:var(--text); margin-bottom:6px; }
   .error-state{ border-style:solid; border-color: rgba(255,107,74,0.3); }
+
+  /* ---------- MI EQUIPO ---------- */
+  .team-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; padding:0 20px 20px; }
+  .team-cell{ aspect-ratio:1/1.25; border-radius:14px; position:relative;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .team-cell.empty{ border:2px dashed var(--line); background:none; cursor:pointer;
+    color:var(--muted); transition:border-color .15s; }
+  .team-cell.empty:hover{ border-color: rgba(255,255,255,0.3); }
+  .team-cell.empty .plus{ font-size:26px; font-weight:300; line-height:1; }
+  .team-cell.filled{ background:var(--panel-2); border:1px solid var(--line); padding:10px 6px 8px; }
+  .team-cell.filled img{ width:44px; height:44px; object-fit:contain; cursor:pointer; }
+  .team-cell.filled .name{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:11.5px;
+    margin-top:4px; text-transform:capitalize; text-align:center; }
+  .team-cell.filled .team-types{ display:flex; gap:3px; margin-top:5px; flex-wrap:wrap; justify-content:center; }
+  .team-cell.filled .team-types .chip{ font-size:8px; padding:2px 6px; }
+  .team-remove-btn{ position:absolute; top:5px; right:5px; background:none; border:none; color:var(--muted);
+    cursor:pointer; font-size:10px; padding:4px; line-height:1; transition:color .15s; }
+  .team-remove-btn:hover{ color:var(--fuego); }
+
+  .coverage-card{ margin:0 20px 20px; background:var(--panel); border-radius:16px; border:1px solid var(--line); padding:16px 18px; }
+  .coverage-title{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; margin-bottom:4px; }
+  .coverage-sub{ font-size:11.5px; color:var(--muted); margin-bottom:12px; line-height:1.4; }
+  .coverage-row{ display:flex; align-items:center; gap:8px; padding:5px 0; border-top:1px solid var(--line); }
+  .coverage-row:first-of-type{ border-top:none; }
+  .coverage-row .tname{ font-size:11.5px; font-weight:600; width:56px; flex-shrink:0; }
+  .coverage-bars{ flex:1; display:flex; gap:2px; height:16px; }
+  .coverage-seg{ flex:1; border-radius:3px; cursor:pointer; position:relative; }
+  .coverage-seg.strong{ background:var(--planta); }
+  .coverage-seg.weak{ background:var(--fuego); }
+  .coverage-seg.neutral{ background:var(--panel-2); border:1px solid var(--line); cursor:default; }
+  .coverage-count{ font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); width:14px; text-align:right; flex-shrink:0; }
+  .coverage-tooltip{ position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 6px);
+    background:#0d0f16; color:var(--text); font-size:10.5px; font-weight:600; padding:4px 8px; border-radius:6px;
+    white-space:nowrap; z-index:10; display:none; border:1px solid var(--line); text-transform:capitalize; }
+  .coverage-tooltip.show{ display:block; }
+  .team-empty-msg{ margin:0 20px 20px; font-size:12.5px; color:var(--muted); line-height:1.5; padding:2px; }
+
+  .team-modal{ position:fixed; inset:0; z-index:100; display:flex; align-items:flex-end; justify-content:center; }
+  .team-modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,0.55); }
+  .team-modal-panel{ position:relative; width:100%; max-width:460px; background:var(--panel);
+    border-radius:20px 20px 0 0; border:1px solid var(--line); border-bottom:none;
+    padding:16px 20px 24px; max-height:75vh; display:flex; flex-direction:column; }
+  .team-modal-header{ display:flex; align-items:center; justify-content:space-between;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; margin-bottom:12px; }
+  .team-modal-header button{ background:none; border:none; color:var(--muted); font-size:14px; cursor:pointer; padding:4px; }
+  .team-modal-suggestions{ margin-top:8px; }
