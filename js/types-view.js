@@ -3,22 +3,23 @@
    Simple/Complejo, y el interruptor Por Pokémon / Por Tipo
    ============================================================ */
 
-  /* ---------- Toggle: Por Pokémon / Por Tipo ---------- */
+  /* ---------- Toggle: Por Pokémon / Por Tipo / Mi Equipo ---------- */
   const modeToggle = document.getElementById('modeToggle');
   const viewPokemon = document.getElementById('view-pokemon');
   const viewTipo = document.getElementById('view-tipo');
-  modeToggle.querySelectorAll('button').forEach(function(btn){
+  const viewTeam = document.getElementById('view-team');
+  const modeButtons = Array.prototype.slice.call(modeToggle.querySelectorAll('button'));
+
+  modeButtons.forEach(function(btn, index){
     btn.addEventListener('click', function(){
-      modeToggle.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+      modeButtons.forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
+      modeToggle.setAttribute('data-active', index);
       const mode = btn.dataset.mode;
-      if(mode === 'tipo'){
-        modeToggle.classList.add('state-2');
-        viewPokemon.style.display = 'none'; viewTipo.style.display = 'block';
-      } else {
-        modeToggle.classList.remove('state-2');
-        viewPokemon.style.display = 'block'; viewTipo.style.display = 'none';
-      }
+      viewPokemon.style.display = (mode === 'pokemon') ? 'block' : 'none';
+      viewTipo.style.display = (mode === 'tipo') ? 'block' : 'none';
+      viewTeam.style.display = (mode === 'equipo') ? 'block' : 'none';
+      if(mode === 'equipo') renderTeamView();
     });
   });
 
@@ -152,7 +153,6 @@
         if(comboSelection.length === 2){
           runTypeQuery(comboSelection);
         } else {
-          // solo hay 1 tipo elegido: el resultado anterior ya no es válido
           document.getElementById('typeResultZone').innerHTML = '';
         }
       } else {
