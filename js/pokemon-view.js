@@ -69,6 +69,7 @@
     const heightM = (p.height / 10).toFixed(1) + ' m';
     const weightKg = (p.weight / 10).toFixed(1) + ' kg';
     const fav = isFavorite(p.name);
+    const inTeam = isInTeam(p.name);
     const idStr = '#' + String(p.id).padStart(3, '0');
     const desc = p.types.length > 1
       ? 'Pokémon de tipo ' + TYPE_LABELS[EN_TO_ES[p.types[0]]] + ' y ' + TYPE_LABELS[EN_TO_ES[p.types[1]]] + '.'
@@ -78,6 +79,7 @@
       '<div class="poke-card">' +
         '<div class="poke-hero">' +
           '<span class="poke-id">' + idStr + '</span>' +
+          '<button class="poke-team-btn' + (inTeam ? ' active' : '') + '" id="teamAddBtn" title="' + (inTeam ? 'Quitar de tu equipo' : 'Añadir a tu equipo') + '" aria-label="' + (inTeam ? 'Quitar de tu equipo' : 'Añadir a tu equipo') + '" aria-pressed="' + inTeam + '">' + (inTeam ? '✓' : '+') + '</button>' +
           '<button class="poke-fav-btn' + (fav ? ' active' : '') + '" id="favBtn" title="' + (fav ? 'Quitar de favoritos' : 'Marcar como favorito') + '" aria-label="' + (fav ? 'Quitar de favoritos' : 'Marcar como favorito') + '" aria-pressed="' + fav + '">' + (fav ? '★' : '☆') + '</button>' +
           '<img class="poke-illustration" src="' + p.sprite + '" alt="' + p.name + '">' +
           '<div class="poke-name">' + p.name + '</div>' +
@@ -191,6 +193,10 @@
         favBtn.setAttribute('aria-pressed', nowFav);
         favBtn.setAttribute('title', label);
       });
+    }
+    const teamBtn = document.getElementById('teamAddBtn');
+    if(teamBtn){
+      teamBtn.addEventListener('click', function(){ toggleTeamMembership(p, teamBtn); });
     }
     loadEvolutionSection(p);
   }
