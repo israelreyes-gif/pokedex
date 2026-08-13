@@ -21,10 +21,11 @@
   </header>
 
   <div class="mode-switch">
-    <div class="toggle" id="modeToggle">
+    <div class="toggle toggle-3" id="modeToggle" data-active="0">
       <div class="slider"></div>
       <button class="active" data-mode="pokemon">Por Pokémon</button>
       <button data-mode="tipo">Por Tipo</button>
+      <button data-mode="equipo">Mi Equipo</button>
     </div>
   </div>
 
@@ -95,6 +96,31 @@
 
   </div>
 
+  <!-- ======================= MODO: MI EQUIPO ======================= -->
+  <div id="view-team" style="display:none;">
+
+    <div class="section-label" id="teamLabel">Mi equipo (0/6)</div>
+    <div class="team-grid" id="teamGrid"></div>
+
+    <div id="teamAnalysis"></div>
+
+  </div>
+
+</div>
+
+<!-- Modal para añadir un Pokémon a una celda del equipo -->
+<div id="teamAddModal" class="team-modal" style="display:none;">
+  <div class="team-modal-backdrop" id="teamModalBackdrop"></div>
+  <div class="team-modal-panel">
+    <div class="team-modal-header">
+      <span>Añadir a tu equipo</span>
+      <button type="button" id="teamModalClose" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="search-box">
+      <input type="text" id="teamModalInput" placeholder="Busca un Pokémon…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Buscar Pokémon para añadir al equipo">
+    </div>
+    <div class="suggestions team-modal-suggestions" id="teamModalSuggestions" style="display:none;"></div>
+  </div>
 </div>
 
 <script src="js/storage.js"></script>
@@ -104,6 +130,7 @@
 <script src="js/evolution-view.js"></script>
 <script src="js/search-autocomplete.js"></script>
 <script src="js/types-view.js"></script>
+<script src="js/team-view.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function(){
