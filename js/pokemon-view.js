@@ -36,7 +36,7 @@
 
     chips.querySelectorAll('.fav-remove-btn').forEach(function(btn){
       btn.addEventListener('click', function(e){
-        e.stopPropagation(); // que no dispare también el click de la tarjeta
+        e.stopPropagation();
         toggleFavorite(btn.dataset.name);
       });
     });
@@ -131,7 +131,6 @@
     try{
       result = await cachedFetchJSON('https://pokeapi.co/api/v2/pokemon/' + query, 'td_pokemon_raw_' + query);
     }catch(err){
-      // fallo real de red/servidor y sin caché: probamos la caché "simplificada" de semillas
       const seeded = lsGet('td_pokemon_' + query);
       if(seeded){
         zone.innerHTML = renderPokemonCard(seeded);
@@ -143,12 +142,19 @@
     }
 
     if(result.notFound){
-      // la petición sí llegó: este Pokémon/número simplemente no existe
       zone.innerHTML = emptyHTML(raw.trim());
       return;
     }
 
-    const raw2 = result.data;
+    const p = normalizePokemonData(result.data);
+    zone.innerHTML = renderPokemonCard(p);
+    wireCard(p);
+  }
+
+  // Convierte la respuesta cruda de PokeAPI en el objeto simplificado que usa
+  // toda la app (ficha, favoritos, y ahora también las celdas de "Mi Equipo"),
+  // y lo guarda en caché por nombre y por número.
+  function normalizePokemonData(raw2){
     const sprite = (raw2.sprites && raw2.sprites.other && raw2.sprites.other['official-artwork'] && raw2.sprites.other['official-artwork'].front_default)
       || (raw2.sprites && raw2.sprites.front_default) || '';
     const statMap = {};
@@ -167,12 +173,9 @@
         speed: statMap.speed
       }
     };
-    // caché simplificada para uso offline / favoritos, guardada por nombre Y por número
     lsSet('td_pokemon_' + p.name, p);
     lsSet('td_pokemon_' + String(p.id), p);
-
-    zone.innerHTML = renderPokemonCard(p);
-    wireCard(p);
+    return p;
   }
 
   function wireCard(p){
@@ -189,7 +192,7 @@
         favBtn.setAttribute('title', label);
       });
     }
-    loadEvolutionSection(p); // esta parte sí es async de verdad (red)
+    loadEvolutionSection(p);
   }
 
-  renderFavRow(); // por si ya hay favoritos guardados de una visita anterior
+  renderFavRow();
