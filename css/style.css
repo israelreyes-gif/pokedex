@@ -291,3 +291,15 @@
     opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:200;
     max-width:85%; text-align:center; line-height:1.4; }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ---------- MOVIMIENTOS ---------- */
+  .move-group{ margin-bottom:16px; }
+  .move-group:last-child{ margin-bottom:0; }
+  .move-group-title{ font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--muted); font-weight:700; margin-bottom:8px; }
+  .move-row{ display:flex; align-items:center; gap:8px; padding:6px 0; border-top:1px solid var(--line); font-size:12.5px; }
+  .move-row:first-of-type{ border-top:none; }
+  .move-row .dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .move-row .dot.dot-none{ background:var(--line); }
+  .move-row .move-name{ flex:1; }
+  .move-row .move-level{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); flex-shrink:0; }
