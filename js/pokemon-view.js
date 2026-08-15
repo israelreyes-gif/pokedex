@@ -3,7 +3,6 @@
    cadena evolutiva y el buscador
    ============================================================ */
 
-  // Activa un elemento con Enter o Espacio, igual que si se hubiera pulsado
   function addKeyboardActivation(el){
     el.addEventListener('keydown', function(e){
       if(e.key === 'Enter' || e.key === ' '){
@@ -51,8 +50,6 @@
     });
   }
 
-  // El cálculo de ventajas/debilidades es local e instantáneo (no depende
-  // de red), así que se resuelve directamente al construir la ficha.
   function computeMatchupHtml(types){
     try{
       const rels = types.map(function(t){ return getTypeRelations(t); });
@@ -63,7 +60,6 @@
     }
   }
 
-  /* ---------- ficha de Pokémon ---------- */
   function renderPokemonCard(p){
     const typeChips = p.types.map(function(en){ return typeChip(EN_TO_ES[en]); }).join('');
     const heightM = (p.height / 10).toFixed(1) + ' m';
@@ -98,12 +94,12 @@
           '<div class="info-line"><span class="k">Altura / Peso</span><span class="v">' + heightM + ' · ' + weightKg + '</span></div>' +
           computeMatchupHtml(p.types) +
           '<div id="pokeEvoSlot"><div class="matchup-block"><div class="matchup-title">Cargando cadena evolutiva…</div></div></div>' +
+          '<div id="pokeMovesSlot"><div class="matchup-block"><div class="matchup-title">Cargando movimientos…</div></div></div>' +
         '</div>' +
       '</div>'
     );
   }
 
-  // Interpreta lo escrito: admite nombre normal o "#numero" (número de Pokédex)
   function parseSearchQuery(raw){
     const trimmed = raw.trim();
     if(trimmed.startsWith('#')){
@@ -153,14 +149,20 @@
     wireCard(p);
   }
 
-  // Convierte la respuesta cruda de PokeAPI en el objeto simplificado que usa
-  // toda la app (ficha, favoritos, y ahora también las celdas de "Mi Equipo"),
-  // y lo guarda en caché por nombre y por número.
   function normalizePokemonData(raw2){
     const sprite = (raw2.sprites && raw2.sprites.other && raw2.sprites.other['official-artwork'] && raw2.sprites.other['official-artwork'].front_default)
       || (raw2.sprites && raw2.sprites.front_default) || '';
     const statMap = {};
     (raw2.stats || []).forEach(function(s){ statMap[s.stat.name] = s.base_stat; });
+
+    const moves = (raw2.moves || []).map(function(m){
+      const methods = {};
+      (m.version_group_details || []).forEach(function(vgd){
+        const method = vgd.move_learn_method.name;
+        if(!(method in methods)) methods[method] = vgd.level_learned_at;
+      });
+      return { name: m.move.name, methods: methods };
+    });
 
     const p = {
       id: raw2.id,
@@ -173,7 +175,8 @@
         hp: statMap.hp, attack: statMap.attack, defense: statMap.defense,
         'special-attack': statMap['special-attack'], 'special-defense': statMap['special-defense'],
         speed: statMap.speed
-      }
+      },
+      moves: moves
     };
     lsSet('td_pokemon_' + p.name, p);
     lsSet('td_pokemon_' + String(p.id), p);
@@ -199,6 +202,7 @@
       teamBtn.addEventListener('click', function(){ toggleTeamMembership(p, teamBtn); });
     }
     loadEvolutionSection(p);
+    loadMovesSection(p);
   }
 
   renderFavRow();
