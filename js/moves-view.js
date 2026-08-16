@@ -8,9 +8,13 @@
 
   const DAMAGE_CLASS_LABELS = { physical: 'Físico', special: 'Especial', status: 'Estado' };
 
+  // Sube este número si algún día cambia qué datos se guardan por movimiento
+  // (p.ej. si se añade precisión o PP) — la caché vieja se ignora sola.
+  const MOVE_CACHE_VERSION = 1;
+
   async function getMoveInfoEs(enSlug){
     const cacheKey = 'td_move_info_' + enSlug;
-    const cached = lsGet(cacheKey);
+    const cached = lsGetVersioned(cacheKey, MOVE_CACHE_VERSION);
     if(cached) return cached;
     try{
       const res = await fetch('https://pokeapi.co/api/v2/move/' + enSlug);
@@ -23,7 +27,7 @@
         power: (json.power === null || json.power === undefined) ? null : json.power,
         damageClass: json.damage_class ? json.damage_class.name : null
       };
-      lsSet(cacheKey, info);
+      lsSetVersioned(cacheKey, info, MOVE_CACHE_VERSION);
       return info;
     }catch(e){
       return { name: formatSlug(enSlug), type: null, power: null, damageClass: null };
