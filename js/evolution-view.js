@@ -3,7 +3,6 @@
    árbol/rejilla de ramas, y navegación entre evoluciones
    ============================================================ */
 
-  /* ---------- cadena evolutiva ---------- */
   const ITEM_LABELS_ES = {
     'thunder-stone':'Piedra Trueno', 'water-stone':'Piedra Agua', 'fire-stone':'Piedra Fuego',
     'leaf-stone':'Piedra Hoja', 'moon-stone':'Piedra Lunar', 'sun-stone':'Piedra Solar',
@@ -53,10 +52,6 @@
 
   const EVO_ARROW_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>';
 
-  // Cadena sin ramas: lista lineal (ej. Pichu → Pikachu → Raichu).
-  // Cadena con ramas: el nodo se muestra destacado y sus evoluciones
-  // posibles aparecen en una rejilla, cada una con su propia condición
-  // (ej. Eevee → Vaporeon / Jolteon / Flareon / …).
   function renderEvoTree(node, depth, incomingDetails, currentName){
     const id = extractIdFromUrl(node.species.url);
     const sprite = spriteUrlForId(id);
@@ -92,7 +87,6 @@
           '</div>';
       });
       html += '</div>';
-      // caso raro: una rama tiene a su vez más evoluciones tras la rejilla
       children.forEach(function(child){
         if(child.evolves_to && child.evolves_to.length){
           html += renderEvoTree(child, depth + 1, null, currentName);
@@ -115,7 +109,7 @@
 
   function wireEvoNodes(container, currentName){
     container.querySelectorAll('.evo-node, .evo-root, .evo-branch-card').forEach(function(node){
-      if(node.dataset.name === currentName) return; // el actual no navega
+      if(node.dataset.name === currentName) return;
       node.setAttribute('role', 'button');
       node.setAttribute('tabindex', '0');
       node.addEventListener('click', function(){
@@ -126,8 +120,6 @@
     });
   }
 
-  // Igual que con la ficha del Pokémon: la cadena evolutiva tampoco cambia
-  // nunca, así que si ya está guardada se usa directamente sin tocar la red.
   async function loadEvolutionSection(p){
     const slot = document.getElementById('pokeEvoSlot');
     if(!slot) return;
@@ -159,11 +151,9 @@
         lsSet(chainCacheKey, chainRoot);
       }
 
-      slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">Cadena evolutiva</div>' +
-        '<div class="evo-chain">' + renderEvoTree(chainRoot, 0, null, p.name) + '</div></div>';
+      slot.innerHTML = '<div class="evo-chain">' + renderEvoTree(chainRoot, 0, null, p.name) + '</div>';
       wireEvoNodes(slot, p.name);
     }catch(e){
-      slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">Cadena evolutiva</div>' +
-        '<div class="evo-unavailable">No hay datos de evolución disponibles para este Pokémon.</div></div>';
+      slot.innerHTML = '<div class="evo-unavailable">No hay datos de evolución disponibles para este Pokémon.</div>';
     }
   }
