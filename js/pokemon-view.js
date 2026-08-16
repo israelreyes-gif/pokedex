@@ -3,12 +3,37 @@
    cadena evolutiva y el buscador
    ============================================================ */
 
+  // Activa un elemento con Enter o Espacio, igual que si se hubiera pulsado
   function addKeyboardActivation(el){
     el.addEventListener('keydown', function(e){
       if(e.key === 'Enter' || e.key === ' '){
         e.preventDefault();
         el.click();
       }
+    });
+  }
+
+  // Construye una sección plegable (cabecera con título + flecha, y el
+  // contenido debajo). "expanded" decide si empieza abierta o cerrada.
+  function collapsibleSectionHTML(title, contentId, placeholderText, expanded){
+    return '<div class="collapsible-section" data-expanded="' + (expanded ? 'true' : 'false') + '">' +
+      '<button type="button" class="collapsible-header" aria-expanded="' + (expanded ? 'true' : 'false') + '">' +
+        '<span class="collapsible-title">' + title + '</span>' +
+        '<span class="collapsible-chevron">▸</span>' +
+      '</button>' +
+      '<div class="collapsible-content" id="' + contentId + '">' + placeholderText + '</div>' +
+    '</div>';
+  }
+
+  // Engancha el clic de todas las cabeceras plegables dentro de un contenedor
+  function wireCollapsibleSections(container){
+    container.querySelectorAll('.collapsible-header').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const section = btn.closest('.collapsible-section');
+        const expandedAhora = section.getAttribute('data-expanded') === 'true';
+        section.setAttribute('data-expanded', expandedAhora ? 'false' : 'true');
+        btn.setAttribute('aria-expanded', expandedAhora ? 'false' : 'true');
+      });
     });
   }
 
@@ -50,16 +75,19 @@
     });
   }
 
+  // El cálculo de ventajas/debilidades es local e instantáneo (no depende
+  // de red), así que se resuelve directamente al construir la ficha.
   function computeMatchupHtml(types){
     try{
       const rels = types.map(function(t){ return getTypeRelations(t); });
       const matchup = computeMatchup(rels);
-      return renderMatchupBlock(matchup, 'Ventajas y debilidades de tipo');
+      return renderMatchupBlock(matchup);
     }catch(e){
-      return '<div class="matchup-block"><div class="matchup-title">No se pudieron calcular las ventajas y debilidades de tipo.</div></div>';
+      return '<div class="evo-unavailable">No se pudieron calcular las ventajas y debilidades de tipo.</div>';
     }
   }
 
+  /* ---------- ficha de Pokémon ---------- */
   function renderPokemonCard(p){
     const typeChips = p.types.map(function(en){ return typeChip(EN_TO_ES[en]); }).join('');
     const heightM = (p.height / 10).toFixed(1) + ' m';
@@ -92,14 +120,15 @@
             '<div class="stat-box"><div class="val">' + p.stats['special-defense'] + '</div><div class="lbl">Def. Esp.</div></div>' +
           '</div>' +
           '<div class="info-line"><span class="k">Altura / Peso</span><span class="v">' + heightM + ' · ' + weightKg + '</span></div>' +
-          computeMatchupHtml(p.types) +
-          '<div id="pokeEvoSlot"><div class="matchup-block"><div class="matchup-title">Cargando cadena evolutiva…</div></div></div>' +
-          '<div id="pokeMovesSlot"><div class="matchup-block"><div class="matchup-title">Cargando movimientos…</div></div></div>' +
+          collapsibleSectionHTML('Ventajas y debilidades de tipo', 'pokeMatchupContent', computeMatchupHtml(p.types), true) +
+          collapsibleSectionHTML('Movimientos (subir de nivel)', 'pokeMovesSlot', '<div class="evo-unavailable">Cargando movimientos…</div>', false) +
+          collapsibleSectionHTML('Cadena evolutiva', 'pokeEvoSlot', '<div class="evo-unavailable">Cargando cadena evolutiva…</div>', false) +
         '</div>' +
       '</div>'
     );
   }
 
+  // Interpreta lo escrito: admite nombre normal o "#numero" (número de Pokédex)
   function parseSearchQuery(raw){
     const trimmed = raw.trim();
     if(trimmed.startsWith('#')){
@@ -149,6 +178,9 @@
     wireCard(p);
   }
 
+  // Convierte la respuesta cruda de PokeAPI en el objeto simplificado que usa
+  // toda la app (ficha, favoritos, y ahora también las celdas de "Mi Equipo"),
+  // y lo guarda en caché por nombre y por número.
   function normalizePokemonData(raw2){
     const sprite = (raw2.sprites && raw2.sprites.other && raw2.sprites.other['official-artwork'] && raw2.sprites.other['official-artwork'].front_default)
       || (raw2.sprites && raw2.sprites.front_default) || '';
@@ -201,8 +233,9 @@
     if(teamBtn){
       teamBtn.addEventListener('click', function(){ toggleTeamMembership(p, teamBtn); });
     }
-    loadEvolutionSection(p);
-    loadMovesSection(p);
+    wireCollapsibleSections(document.getElementById('pokeResultZone'));
+    loadEvolutionSection(p); // esta parte sí es async de verdad (red)
+    loadMovesSection(p);     // igual: async de verdad (red), traduce cada movimiento
   }
 
-  renderFavRow();
+  renderFavRow(); // por si ya hay favoritos guardados de una visita anterior
