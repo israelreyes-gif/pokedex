@@ -25,14 +25,22 @@
     '</div>';
   }
 
-  // Engancha el clic de todas las cabeceras plegables dentro de un contenedor
+  // Engancha el clic de todas las cabeceras plegables dentro de un contenedor.
+  // Solo puede haber UNA sección abierta a la vez: al abrir una, las demás se cierran.
   function wireCollapsibleSections(container){
-    container.querySelectorAll('.collapsible-header').forEach(function(btn){
+    const sections = container.querySelectorAll('.collapsible-section');
+    sections.forEach(function(section){
+      const btn = section.querySelector('.collapsible-header');
       btn.addEventListener('click', function(){
-        const section = btn.closest('.collapsible-section');
         const expandedAhora = section.getAttribute('data-expanded') === 'true';
-        section.setAttribute('data-expanded', expandedAhora ? 'false' : 'true');
-        btn.setAttribute('aria-expanded', expandedAhora ? 'false' : 'true');
+        sections.forEach(function(s){
+          s.setAttribute('data-expanded', 'false');
+          s.querySelector('.collapsible-header').setAttribute('aria-expanded', 'false');
+        });
+        if(!expandedAhora){
+          section.setAttribute('data-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+        }
       });
     });
   }
@@ -120,7 +128,7 @@
             '<div class="stat-box"><div class="val">' + p.stats['special-defense'] + '</div><div class="lbl">Def. Esp.</div></div>' +
           '</div>' +
           '<div class="info-line"><span class="k">Altura / Peso</span><span class="v">' + heightM + ' · ' + weightKg + '</span></div>' +
-          collapsibleSectionHTML('Ventajas y debilidades de tipo', 'pokeMatchupContent', computeMatchupHtml(p.types), true) +
+          collapsibleSectionHTML('Ventajas y debilidades de tipo', 'pokeMatchupContent', computeMatchupHtml(p.types), false) +
           collapsibleSectionHTML('Movimientos (subir de nivel)', 'pokeMovesSlot', '<div class="evo-unavailable">Cargando movimientos…</div>', false) +
           collapsibleSectionHTML('Cadena evolutiva', 'pokeEvoSlot', '<div class="evo-unavailable">Cargando cadena evolutiva…</div>', false) +
         '</div>' +
