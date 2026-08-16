@@ -9,7 +9,7 @@
   const DAMAGE_CLASS_LABELS = { physical: 'Físico', special: 'Especial', status: 'Estado' };
 
   async function getMoveInfoEs(enSlug){
-    const cacheKey = 'td_move_es_' + enSlug;
+    const cacheKey = 'td_move_info_' + enSlug;
     const cached = lsGet(cacheKey);
     if(cached) return cached;
     try{
