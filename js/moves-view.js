@@ -36,12 +36,19 @@
 
   function moveRowHTML(m){
     const dot = m.type ? '<span class="dot t-' + EN_TO_ES[m.type] + '"></span>' : '<span class="dot dot-none"></span>';
-    const potencia = (m.power !== null && m.power !== undefined) ? m.power : '—';
+    let potencia, potenciaCss;
+    if(m.power !== null && m.power !== undefined){
+      potencia = m.power; potenciaCss = '';
+    } else if(m.damageClass === 'status'){
+      potencia = 'No ataca'; potenciaCss = ' move-power-text';
+    } else {
+      potencia = 'Variable'; potenciaCss = ' move-power-text';
+    }
     const claseLabel = DAMAGE_CLASS_LABELS[m.damageClass] || '—';
     const claseCss = m.damageClass || 'none';
     return '<div class="move-row">' + dot +
       '<span class="move-name">' + m.name + '</span>' +
-      '<span class="move-power">' + potencia + '</span>' +
+      '<span class="move-power' + potenciaCss + '">' + potencia + '</span>' +
       '<span class="move-class move-class-' + claseCss + '">' + claseLabel + '</span>' +
       '<span class="move-level">Nv. ' + m.level + '</span>' +
     '</div>';
