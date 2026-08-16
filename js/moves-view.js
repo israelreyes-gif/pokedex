@@ -8,8 +8,6 @@
 
   const DAMAGE_CLASS_LABELS = { physical: 'Físico', special: 'Especial', status: 'Estado' };
 
-  // Sube este número si algún día cambia qué datos se guardan por movimiento
-  // (p.ej. si se añade precisión o PP) — la caché vieja se ignora sola.
   const MOVE_CACHE_VERSION = 1;
 
   async function getMoveInfoEs(enSlug){
@@ -62,8 +60,7 @@
     });
 
     if(!learnedByLevel.length){
-      slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">Movimientos</div>' +
-        '<div class="evo-unavailable">No hay datos de movimientos disponibles para este Pokémon.</div></div>';
+      slot.innerHTML = '<div class="evo-unavailable">No hay datos de movimientos disponibles para este Pokémon.</div>';
       return;
     }
 
@@ -77,12 +74,10 @@
       }));
       infos.sort(function(a, b){ return (a.level || 0) - (b.level || 0); });
 
-      slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">Movimientos (subir de nivel)</div>' +
+      slot.innerHTML =
         '<div class="move-header-row"><span></span><span>Nombre</span><span>Pot.</span><span>Categoría</span><span>Nivel</span></div>' +
-        infos.map(moveRowHTML).join('') +
-      '</div>';
+        infos.map(moveRowHTML).join('');
     }catch(e){
-      slot.innerHTML = '<div class="matchup-block"><div class="matchup-title">Movimientos</div>' +
-        '<div class="evo-unavailable">No se pudieron cargar los movimientos.</div></div>';
+      slot.innerHTML = '<div class="evo-unavailable">No se pudieron cargar los movimientos.</div>';
     }
   }
