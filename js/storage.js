@@ -16,6 +16,21 @@
     try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* modo privado, etc. */ }
   }
 
+  // Versión "con versión" de lsGet/lsSet: cuando cambie qué forma tienen los
+  // datos guardados bajo una clave (p.ej. se añade un campo nuevo), basta con
+  // subir el número de versión en el sitio donde se usa — los datos antiguos
+  // (de una versión distinta) se tratan como "no hay nada guardado" y se piden
+  // de nuevo, sobrescribiendo la MISMA clave (sin dejar restos huérfanos).
+  function lsGetVersioned(key, version){
+    const data = lsGet(key);
+    if(data && data._cacheVersion === version) return data;
+    return null;
+  }
+  function lsSetVersioned(key, data, version){
+    data._cacheVersion = version;
+    lsSet(key, data);
+  }
+
 
   /* ---------- favoritos ---------- */
   function getFavorites(){ return lsGet('td_favorites') || []; }
