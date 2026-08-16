@@ -5,8 +5,6 @@
    (chips, etiquetas, estados de carga/error)
    ============================================================ */
 
-  // Los datos de un Pokémon (tipos, estadísticas, altura, peso) no cambian
-  // nunca, así que si ya está guardado se usa directamente sin tocar la red.
   async function cachedFetchJSON(url, cacheKey){
     const cached = lsGet(cacheKey);
     if(cached) return { data: cached };
@@ -15,29 +13,23 @@
     try{
       res = await fetch(url);
     }catch(networkErr){
-      // fallo real de red (sin conexión, dominio bloqueado, etc.) y sin nada guardado
       throw { kind: 'network' };
     }
     if(res.status === 404){
-      // la petición SÍ llegó: PokeAPI responde que ese Pokémon/tipo no existe
       return { notFound: true };
     }
     if(!res.ok){
       throw { kind: 'server', status: res.status };
     }
     const data = await res.json();
-    lsSet(cacheKey, data); // guardar la respuesta cruda para que la próxima vez no haga falta la red
+    lsSet(cacheKey, data);
     return { data: data };
   }
 
-  // Las relaciones de tipo son datos fijos (nunca cambian), así que
-  // se leen directamente de TYPE_CHART en vez de pedirlas a PokeAPI.
   function getTypeRelations(enSlug){
     return TYPE_CHART[enSlug];
   }
 
-  // Lista de Pokémon que tienen un tipo determinado (para "Ejemplos de este tipo").
-  // Esto sí cambia según el juego/generación, así que se pide a PokeAPI y se cachea.
   async function getTypePokemonList(enSlug){
     const cacheKey = 'td_type_pokemon_' + enSlug;
     const cached = lsGet(cacheKey);
@@ -72,14 +64,12 @@
   function computeMatchup(ownRelsArray){
     const fuerte = [], flojo = [], sinEfectoAtaque = [], debil = [], resiste = [], inmune = [];
     ALL_EN_TYPES.forEach(function(en){
-      // ofensivo: mejor multiplicador entre los tipos propios atacando "en"
       let best = 0;
       ownRelsArray.forEach(function(rel){ best = Math.max(best, multTo(rel, en)); });
       if(best >= 2) fuerte.push({ t: EN_TO_ES[en], m: 'x2' });
       else if(best === 0) sinEfectoAtaque.push({ t: EN_TO_ES[en], m: 'x0' });
       else if(best < 1) flojo.push({ t: EN_TO_ES[en], m: 'x½' });
 
-      // defensivo: producto de multiplicadores al recibir ataques de "en"
       let combo = 1;
       ownRelsArray.forEach(function(rel){ combo *= multFrom(rel, en); });
       if(combo === 0) inmune.push({ t: EN_TO_ES[en], m: 'x0' });
@@ -89,20 +79,15 @@
     return { fuerte: fuerte, flojo: flojo, sinEfectoAtaque: sinEfectoAtaque, debil: debil, resiste: resiste, inmune: inmune };
   }
 
-
-  /* ---------- render helpers ---------- */
   function typeChip(esId){ return '<span class="chip t-' + esId + '">' + TYPE_LABELS[esId] + '</span>'; }
   function matchupTag(entry){
     const label = TYPE_LABELS[entry.t];
     const mult = entry.m ? '<span class="mult">' + entry.m + '</span>' : '';
     return '<span class="tag"><span class="dot t-' + entry.t + '"></span>' + label + mult + '</span>';
   }
-  function renderMatchupBlock(matchup, title, opts){
-    opts = opts || {};
-    let html = opts.standalone ? '<div>' : '<div class="matchup-block">';
-    if(title) html += '<div class="matchup-title">' + title + '</div>';
+  function renderMatchupBlock(matchup){
+    let html = '<div>';
 
-    // ATAQUE: si este tipo/Pokémon ataca, ¿a quién le hace mucho daño y a quién apenas le afecta?
     html += '<div class="matchup-section">';
     html += '<div class="matchup-section-title">Ataque</div>';
     html += '<div class="row-group"><div class="row-title fuerte">▲ Fuerte contra</div><div class="tag-list">';
@@ -116,7 +101,6 @@
     html += '</div></div>';
     html += '</div>';
 
-    // DEFENSA: si a este tipo/Pokémon le atacan, ¿qué le afecta?
     html += '<div class="matchup-section">';
     html += '<div class="matchup-section-title">Defensa</div>';
     html += '<div class="row-group"><div class="row-title debil">▼ Débil contra</div><div class="tag-list">';
