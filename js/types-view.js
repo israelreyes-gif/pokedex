@@ -77,7 +77,7 @@
       zone.innerHTML =
         '<div class="result"><div class="result-head">' + chipsHTML +
         '</div>' +
-        '<div class="result-body">' + renderMatchupBlock(matchup, '', { standalone: true }) +
+        '<div class="result-body">' + renderMatchupBlock(matchup) +
         '<div id="typeExamplesSlot" class="examples-section"><div class="examples-title">' +
           (esTypes.length > 1 ? 'Ejemplos de esta combinación' : 'Ejemplos de este tipo') +
         '</div><div style="font-size:12px;color:var(--muted);">Cargando…</div></div>' +
